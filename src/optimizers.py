@@ -18,7 +18,9 @@ class SGD(Optimizer):
 
     def apply(self, layers, sum_der_w, sum_der_b, batch_len):
         for _, layer in layers:
+            # lr = learning rate  and gw,gb is gradient 
             gw = sum_der_w[layer]/batch_len
+
             layer.w += -(self.lr*gw)
             gb = sum_der_b[layer]/batch_len
             layer.b += -(self.lr*gb)

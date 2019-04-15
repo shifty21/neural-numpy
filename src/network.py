@@ -2,6 +2,7 @@ import numpy as np
 
 import layers as l
 import utils as u
+import time
 
 
 class NeuralNetwork():
@@ -21,10 +22,10 @@ class NeuralNetwork():
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
 
+
     def feedforward(self, x):
         self.input_layer.z = x
         self.input_layer.a = x
-
         for prev_layer, layer in self.layers:
             layer.feedforward(prev_layer)
 
@@ -57,7 +58,6 @@ def train(net, optimizer, num_epochs, batch_size, trn_set, vld_set=None):
 
     for i in range(num_epochs):
         np.random.shuffle(inputs)
-
         # divide input observations into batches
         batches = [inputs[j:j+batch_size] for j in range(0, len(inputs), batch_size)]
         inputs_done = 0
@@ -65,7 +65,6 @@ def train(net, optimizer, num_epochs, batch_size, trn_set, vld_set=None):
             net.backpropagate(batch, optimizer)
             inputs_done += len(batch)
             u.print("Epoch %02d %s [%d/%d]" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
-
         if vld_set:
             # test the net at the end of each epoch
             u.print("Epoch %02d %s [%d/%d] > Testing..." % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
