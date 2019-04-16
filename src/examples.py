@@ -18,7 +18,7 @@ def fcl01(epoch,batch_size,*_):
         l.FullyConnectedLayer(100, init_func=f.glorot_uniform, act_func=f.sigmoid),
         l.FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.sigmoid)
     ], f.quadratic)
-    optimizer = o.SGD(3.0)
+    optimizer = o.SGD_Momentum(3.0,0.9)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size

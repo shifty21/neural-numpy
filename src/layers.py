@@ -61,6 +61,8 @@ class FullyConnectedLayer(Layer):
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
         self.b = f.zero((self.n_out, 1))
+        self.vw = np.zeros_like(self.w)
+        self.vb = np.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
         """
@@ -105,6 +107,7 @@ class ConvolutionalLayer(Layer):
         self.init_func = init_func
         self.act_func = act_func
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
+
 
     def connect_to(self, prev_layer):
         self.stride_length = 1
