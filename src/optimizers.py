@@ -32,7 +32,6 @@ class SGD_Momentum(Optimizer):
     def apply(self, layers, sum_der_w, sum_der_b, batch_len):
         for _, layer in layers:
             # lr = learning rate  and gw,gb is gradient
-            import pdb; pdb.set_trace()
             gw = sum_der_w[layer]/batch_len
             layer.vw = self.m*layer.vw + gw
             layer.w += -(layer.vw)
