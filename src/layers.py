@@ -14,6 +14,17 @@ class Layer(metaclass=abc.ABCMeta):
         self.n_out = None
         self.w = None
         self.b = None
+        self.vw = None
+        self.vb = None
+        self.mtw = None
+        self.vtw = None
+        self.mtb = None
+        self.vtb = None
+        self.t = 0
+        self.m0w = None
+        self.m0b = None
+        self.u0w = 0
+        self.u0b = 0
 
     @abc.abstractmethod
     def connect_to(self, prev_layer):
@@ -59,10 +70,18 @@ class FullyConnectedLayer(Layer):
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
 
     def connect_to(self, prev_layer):
+        print ("inside connect_to")
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
         self.b = f.zero((self.n_out, 1))
         self.vw = np.zeros_like(self.w)
         self.vb = np.zeros_like(self.b)
+
+        self.m0w = np.zeros_like(self.w)
+        self.m0b = np.zeros_like(self.b)
+        self.mtw = np.zeros_like(self.w)
+        self.vtw = np.zeros_like(self.w)
+        self.mtb = np.zeros_like(self.b)
+        self.vtb = np.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
         """
@@ -118,6 +137,15 @@ class ConvolutionalLayer(Layer):
         self.w = self.init_func((self.depth, prev_layer.depth, self.kernel_size, self.kernel_size),
             prev_layer.n_out, self.n_out)
         self.b = f.zero((self.depth, 1))
+        self.vw = np.zeros_like(self.w)
+        self.vb = np.zeros_like(self.b)
+
+        self.m0w = np.zeros_like(self.w)
+        self.m0b = np.zeros_like(self.b)
+        self.mtw = np.zeros_like(self.w)
+        self.vtw = np.zeros_like(self.w)
+        self.mtb = np.zeros_like(self.b)
+        self.vtb = np.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
         """
@@ -216,6 +244,17 @@ class MaxPoolingLayer(Layer):
 
         self.w = np.empty((0))
         self.b = np.empty((0))
+        self.vw = np.zeros_like(self.w)
+        self.vb = np.zeros_like(self.b)
+
+        self.m0w = np.zeros_like(self.w)
+        self.m0b = np.zeros_like(self.b)
+        self.mtw = np.zeros_like(self.w)
+        self.vtw = np.zeros_like(self.w)
+        self.mtb = np.zeros_like(self.b)
+        self.vtb = np.zeros_like(self.b)
+
+
 
     def feedforward(self, prev_layer):
         """

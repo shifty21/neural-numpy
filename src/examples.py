@@ -18,7 +18,11 @@ def fcl01(epoch,batch_size,*_):
         l.FullyConnectedLayer(100, init_func=f.glorot_uniform, act_func=f.sigmoid),
         l.FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.sigmoid)
     ], f.quadratic)
-    optimizer = o.SGD_Momentum(3.0,0.9)
+    # optimizer = o.SGD_Momentum(3.0,0.9)
+    # optimizer = o.NAG(3.0,0.9)
+    # optimizer = o.ADAM(3.0)
+    optimizer = o.ADAM_MAX()
+    # optimizer = o.SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
@@ -37,11 +41,11 @@ def fcl02(epoch,batch_size,*_):
 def cnn01(epoch,batch_size,kernel_size,pool_size):
     net = n.NeuralNetwork([
         l.InputLayer(height=28, width=28),
-        l.ConvolutionalLayer(2, kernel_size=kernel_size, init_func10=f.glorot_uniform, act_func=f.sigmoid),
+        l.ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform, act_func=f.sigmoid),
         l.MaxPoolingLayer(pool_size=pool_size),
         l.FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax)
     ], f.log_likelihood)
-    optimizer = o.SGD(0.1)
+    optimizer = o.SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
