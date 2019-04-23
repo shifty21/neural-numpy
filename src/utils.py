@@ -4,9 +4,11 @@ import struct
 import sys
 
 import numpy as np
-
+from logger import logger
 
 def build_mnist_npz(mnist_dirpath):
+    log = logger.get_logger()
+    log.info('Building mnist npz')
     training_set_images = os.path.join(mnist_dirpath, "train-images-idx3-ubyte")
     training_set_labels = os.path.join(mnist_dirpath, "train-labels-idx1-ubyte")
     test_set_images = os.path.join(mnist_dirpath, "t10k-images-idx3-ubyte")
@@ -30,6 +32,8 @@ def build_mnist_npz(mnist_dirpath):
         np.savez_compressed(f, trn_imgs=trn_imgs, trn_lbls=trn_lbls, tst_imgs=tst_imgs, tst_lbls=tst_lbls)
 
 def load_mnist_npz(mnist_npzpath):
+    log = logger.get_logger()
+    log.info('loading mnist npz')
     def to_categorical(lbl):
         if lbl not in labels_to_categorical:
             y = np.zeros((10, 1), dtype=np.uint8)
@@ -61,6 +65,7 @@ class bcolors:
     ENDC      = "\033[0m"
     BOLD      = "\033[1m"
     UNDERLINE = "\033[4m"
+
 
 def bar(now, end):
     return "[%-10s]" % ("=" * int(10*now/end))

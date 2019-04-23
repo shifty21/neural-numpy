@@ -4,7 +4,7 @@ import numpy as np
 
 import functions as f
 import utils as u
-
+from logger import logger
 
 class Layer(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -59,8 +59,11 @@ class InputLayer(Layer):
 
 
 class FullyConnectedLayer(Layer):
+
     def __init__(self, height, init_func, act_func):
         super().__init__()
+        self.log = logger.get_logger()
+        self.log.info('FullyConnectedLayer init')
         self.depth = 1
         self.height = height
         self.width = 1
@@ -70,7 +73,6 @@ class FullyConnectedLayer(Layer):
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
 
     def connect_to(self, prev_layer):
-        print ("inside connect_to")
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
         self.b = f.zero((self.n_out, 1))
         self.vw = np.zeros_like(self.w)
@@ -84,6 +86,7 @@ class FullyConnectedLayer(Layer):
         self.vtb = np.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
+
         """
         Feedforward the observation through the layer
 
@@ -120,6 +123,8 @@ class FullyConnectedLayer(Layer):
 
 class ConvolutionalLayer(Layer):
     def __init__(self, depth, kernel_size, init_func, act_func):
+        self.log = logger.get_logger()
+        self.log.info('ConvolutionalLayer init')
         super().__init__()
         self.depth = depth
         self.kernel_size = kernel_size
@@ -232,6 +237,8 @@ class ConvolutionalLayer(Layer):
 class MaxPoolingLayer(Layer):
     def __init__(self, pool_size):
         super().__init__()
+        self.log = logger.get_logger()
+        self.log.info('MaxPoolingLayer init')
         self.pool_size = pool_size
         self.der_act_func = lambda x: x
 

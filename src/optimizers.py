@@ -2,6 +2,7 @@ import abc
 
 import numpy as np
 import math
+from logger import logger
 
 class Optimizer(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -14,6 +15,8 @@ class Optimizer(metaclass=abc.ABCMeta):
 
 class SGD(Optimizer):
     def __init__(self, lr):
+        log = logger.get_logger()
+        log.info('Using SGD')
         self.lr = lr
 
     def apply(self, layers, sum_der_w, sum_der_b, batch_len):
@@ -26,6 +29,8 @@ class SGD(Optimizer):
 
 class SGD_Momentum(Optimizer):
     def __init__(self, lr, m):
+        log = logger.get_logger()
+        log.info('Using SGD_Momentum')
         self.lr = lr
         self.m = m
 
@@ -45,6 +50,8 @@ class SGD_Momentum(Optimizer):
 #Nesterov accelerated gradient
 class NAG(Optimizer):
     def __init__(self, lr, m):
+        log = logger.get_logger()
+        log.info('Using NAG')
         self.lr = lr
         self.m = m
 
@@ -63,6 +70,8 @@ class NAG(Optimizer):
 #Adaptive Moment Estimation
 class ADAM(Optimizer):
     def __init__(self, alpha = 0.002, beta1=0.9, beta2=0.999, epsilon=1e-8):
+        log = logger.get_logger()
+        log.info('Using ADAM')
         self.beta1 = beta1
         self.beta2 = beta2
         self.epsilon = epsilon
@@ -95,6 +104,8 @@ class ADAM(Optimizer):
 
 class ADAM_MAX(Optimizer):
     def __init__(self,beta1 =0.9, beta2 = 0.999, alpha = 0.002):
+        log = logger.get_logger()
+        log.info('Using ADAM_MAX')
         self.beta1 = beta1
         self.beta2 = beta2
         self.alpha = alpha
