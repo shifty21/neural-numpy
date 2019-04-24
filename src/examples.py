@@ -10,7 +10,7 @@ import layers as l
 import optimizers as o
 import network as n
 import utils as u
-from logger import logger
+from Logger import Logger
 
 def fcl01(epoch, batch_size, *_):
     net = n.NeuralNetwork([
@@ -74,11 +74,10 @@ if __name__ == "__main__":
     parser.add_argument("-b","--batch_size", help="Size of each batch", type = int)
     parser.add_argument("-ks","--kernel_size", help="Size of each batch", type = int)
     parser.add_argument("-p","--pool_size", help="MaxPoolingLayer pool size", type = int)
-    parser.add_argument("-l","--log_level", help="Logging level - DEBUG, INFO, WARNING, ERROR, CRITICAL")
     args = parser.parse_args()
 
-    log_obj = logger(args.log_level.upper())
-    log = logger.get_logger()
+    Logger()
+    log = Logger.get_logger(__name__)
 
     np.random.seed(314)
 

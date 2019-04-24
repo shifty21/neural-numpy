@@ -4,7 +4,7 @@ import numpy as np
 
 import functions as f
 import utils as u
-from logger import logger
+from Logger import Logger
 
 class Layer(metaclass=abc.ABCMeta):
     def __init__(self):
@@ -62,7 +62,7 @@ class FullyConnectedLayer(Layer):
 
     def __init__(self, height, init_func, act_func):
         super().__init__()
-        self.log = logger.get_logger()
+        self.log = Logger.get_logger(__name__)
         self.log.info('FullyConnectedLayer init')
         self.depth = 1
         self.height = height
@@ -123,7 +123,7 @@ class FullyConnectedLayer(Layer):
 
 class ConvolutionalLayer(Layer):
     def __init__(self, depth, kernel_size, init_func, act_func):
-        self.log = logger.get_logger()
+        self.log = Logger.get_logger(__name__)
         self.log.info('ConvolutionalLayer init')
         super().__init__()
         self.depth = depth
@@ -237,7 +237,7 @@ class ConvolutionalLayer(Layer):
 class MaxPoolingLayer(Layer):
     def __init__(self, pool_size):
         super().__init__()
-        self.log = logger.get_logger()
+        self.log = Logger.get_logger(__name__)
         self.log.info('MaxPoolingLayer init')
         self.pool_size = pool_size
         self.der_act_func = lambda x: x

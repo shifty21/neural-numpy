@@ -1,0 +1,4 @@
+04/24/2019 02:51:32 PM Logger       36 INFO loading mnist npz
+04/24/2019 02:51:33 PM Logger       66 INFO FullyConnectedLayer init
+04/24/2019 02:51:33 PM Logger       66 INFO FullyConnectedLayer init
+04/24/2019 02:51:33 PM Logger       108 INFO Using ADAM_MAX

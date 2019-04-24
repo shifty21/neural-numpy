@@ -4,10 +4,10 @@ import struct
 import sys
 
 import numpy as np
-from logger import logger
+from Logger import Logger
 
 def build_mnist_npz(mnist_dirpath):
-    log = logger.get_logger()
+    log = Logger.get_logger(__name__)
     log.info('Building mnist npz')
     training_set_images = os.path.join(mnist_dirpath, "train-images-idx3-ubyte")
     training_set_labels = os.path.join(mnist_dirpath, "train-labels-idx1-ubyte")
@@ -32,7 +32,7 @@ def build_mnist_npz(mnist_dirpath):
         np.savez_compressed(f, trn_imgs=trn_imgs, trn_lbls=trn_lbls, tst_imgs=tst_imgs, tst_lbls=tst_lbls)
 
 def load_mnist_npz(mnist_npzpath):
-    log = logger.get_logger()
+    log = Logger.get_logger(__name__)
     log.info('loading mnist npz')
     def to_categorical(lbl):
         if lbl not in labels_to_categorical:

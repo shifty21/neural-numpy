@@ -3,7 +3,7 @@ import numpy as np
 import layers as l
 import utils as u
 import time
-
+from Logger import Logger
 
 class NeuralNetwork():
     def __init__(self, layers, loss_func):

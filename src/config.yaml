@@ -1,0 +1,44 @@
+version: 1
+formatters:
+  default:
+    format: '%(asctime)s %(name)-12s %(lineno)d %(levelname)s %(message)s'
+    datefmt: '%m/%d/%Y %I:%M:%S %p'
+handlers:
+  debug_file_handler:
+    class : logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: default
+    filename: ../log/debug.log
+    maxBytes: 10485760
+    backupCount: 3
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: default
+    stream: ext://sys.stdout
+  info_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: default
+    filename: ../log/info.log
+    maxBytes: 10485760
+    backupCount: 20
+    encoding: utf8
+  error_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: ERROR
+    formatter: default
+    filename: ../log/errors.log
+    maxBytes: 10485760
+    backupCount: 20
+    encoding: utf8
+
+
+# loggers:
+#   sampleLogger:
+#     level: DEBUG
+#     handlers: [file]
+#     propagate: no
+root:
+  level: INFO
+  handlers: ["console", "debug_file_handler", "info_file_handler", "error_file_handler"]
