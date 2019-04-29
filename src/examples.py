@@ -10,7 +10,8 @@ import layers as l
 import optimizers as o
 import network as n
 import utils as u
-from Logger import Logger
+from logger import Logger
+from train_utils import Train
 
 def fcl01(epoch, batch_size, *_):
     net = n.NeuralNetwork([
@@ -75,10 +76,9 @@ if __name__ == "__main__":
     parser.add_argument("-ks","--kernel_size", help="Size of each batch", type = int)
     parser.add_argument("-p","--pool_size", help="MaxPoolingLayer pool size", type = int)
     args = parser.parse_args()
-
     Logger()
     log = Logger.get_logger(__name__)
-
+    train = Train()
     np.random.seed(314)
 
     u.print("Loading '%s'..." % args.data, bcolor=u.bcolors.BOLD)
@@ -91,8 +91,8 @@ if __name__ == "__main__":
     # u.print(inspect.getsource(locals()[args.func]).strip())
 
     u.print("Training network...", bcolor=u.bcolors.BOLD)
-    n.train(net, optimizer, num_epochs, batch_size, trn_set, vld_set)
+    train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set, vld_set)
 
-    u.print("Testing network...", bcolor=u.bcolors.BOLD)
-    accuracy = n.test(net, tst_set)
-    u.print("Test accuracy: %0.2f%%" % (accuracy*100))
+    # u.print("Testing network...", bcolor=u.bcolors.BOLD)
+    # accuracy = n.test(net, tst_set)
+    # u.print("Test accuracy: %0.2f%%" % (accuracy*100))

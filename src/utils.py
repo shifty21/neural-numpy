@@ -4,7 +4,8 @@ import struct
 import sys
 
 import numpy as np
-from Logger import Logger
+from logger import Logger
+
 
 def build_mnist_npz(mnist_dirpath):
     log = Logger.get_logger(__name__)
@@ -31,6 +32,7 @@ def build_mnist_npz(mnist_dirpath):
     with open("mnist.npz", "wb") as f:
         np.savez_compressed(f, trn_imgs=trn_imgs, trn_lbls=trn_lbls, tst_imgs=tst_imgs, tst_lbls=tst_lbls)
 
+
 def load_mnist_npz(mnist_npzpath):
     log = Logger.get_logger(__name__)
     log.info('loading mnist npz')
@@ -54,6 +56,7 @@ def load_mnist_npz(mnist_npzpath):
     tst_x = np.array([img/255. for img in tst_imgs]).astype(np.float32)
     tst_y = np.array([to_categorical(lbl) for lbl in tst_lbls]).astype(np.uint8)
     return (trn_x, trn_y), (tst_x, tst_y)
+
 
 
 class bcolors:

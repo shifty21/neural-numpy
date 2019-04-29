@@ -4,7 +4,7 @@ import numpy as np
 
 import functions as f
 import utils as u
-from Logger import Logger
+from logger import Logger
 
 class Layer(metaclass=abc.ABCMeta):
     def __init__(self):

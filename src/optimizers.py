@@ -2,7 +2,7 @@ import abc
 
 import numpy as np
 import math
-from Logger import Logger
+from logger import Logger
 
 class Optimizer(metaclass=abc.ABCMeta):
     def __init__(self):

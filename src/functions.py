@@ -18,6 +18,7 @@ def sigmoid(x):
     with np.errstate(over="ignore"):
         return 1.0 / (1.0 + np.exp(-x))
 
+
 def der_sigmoid(x, y=None):
     s = sigmoid(x)
     return s * (1 - s)
@@ -42,8 +43,10 @@ def der_softmax(x, y=None):
 def quadratic(a, y):
     return a-y
 
+
 def log_likelihood(a, y):
     return -1.0 / a[np.where(y == 1)]
+
 
 def categorical_crossentropy(a, y):
     a = a.flatten() / np.sum(a)
