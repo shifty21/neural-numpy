@@ -6,18 +6,22 @@ import sys
 import numpy as np
 
 import functions as f
-import layers as l
 import optimizers as o
 import network as n
 import utils as u
 from logger import Logger
 from train_utils import Train
+from layers import InputLayer
+from layers import FullyConnectedLayer
+from layers import MaxPoolingLayer
+from layers import ConvolutionalLayer
+
 
 def fcl01(epoch, batch_size, *_):
     net = n.NeuralNetwork([
-        l.InputLayer(height=28, width=28),
-        l.FullyConnectedLayer(100, init_func=f.glorot_uniform, act_func=f.sigmoid),
-        l.FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.sigmoid)
+        InputLayer(height=28, width=28),
+        FullyConnectedLayer(100, init_func=f.glorot_uniform, act_func=f.sigmoid),
+        FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.sigmoid)
     ], f.quadratic)
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = o.NAG(3.0,0.9)
@@ -30,8 +34,8 @@ def fcl01(epoch, batch_size, *_):
 
 def fcl02(epoch,batch_size,*_):
     net = n.NeuralNetwork([
-        l.InputLayer(height=28, width=28),
-        l.FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.softmax)
+        InputLayer(height=28, width=28),
+        FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.softmax)
     ], f.log_likelihood)
     optimizer = o.SGD(0.1)
     num_epochs = epoch
@@ -41,10 +45,10 @@ def fcl02(epoch,batch_size,*_):
 
 def cnn01(epoch,batch_size,kernel_size,pool_size):
     net = n.NeuralNetwork([
-        l.InputLayer(height=28, width=28),
-        l.ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform, act_func=f.sigmoid),
-        l.MaxPoolingLayer(pool_size=pool_size),
-        l.FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax)
+        InputLayer(height=28, width=28),
+        ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform, act_func=f.sigmoid),
+        MaxPoolingLayer(pool_size=pool_size),
+        FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax)
     ], f.log_likelihood)
     # optimizer = o.SGD(0.1)
     optimizer = o.ADAM_MAX()
@@ -55,10 +59,10 @@ def cnn01(epoch,batch_size,kernel_size,pool_size):
 
 def cnn02(epoch,batch_size,kernel_size,pool_size):
     net = n.NeuralNetwork([
-        l.InputLayer(height=28, width=28),
-        l.ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform, act_func=f.sigmoid),
-        l.MaxPoolingLayer(pool_size=pool_size),
-        l.FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax)
+        InputLayer(height=28, width=28),
+        ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform, act_func=f.sigmoid),
+        MaxPoolingLayer(pool_size=pool_size),
+        FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax)
     ], f.categorical_crossentropy)
     # optimizer = o.SGD(0.1)
     optimizer = o.ADAM()
@@ -92,7 +96,3 @@ if __name__ == "__main__":
 
     u.print("Training network...", bcolor=u.bcolors.BOLD)
     train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set, vld_set)
-
-    # u.print("Testing network...", bcolor=u.bcolors.BOLD)
-    # accuracy = n.test(net, tst_set)
-    # u.print("Test accuracy: %0.2f%%" % (accuracy*100))
