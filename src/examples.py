@@ -10,11 +10,8 @@ import network as n
 import utils as u
 from logger import Logger
 from train_utils import Train
-from layers import InputLayer
-from layers import FullyConnectedLayer
-from layers import MaxPoolingLayer
-from layers import ConvolutionalLayer
-from optimizers import ADAM_MAX
+from layers import *
+from optimizers import *
 
 def fcl01(epoch, batch_size, *_):
     net = n.NeuralNetwork([
@@ -25,11 +22,6 @@ def fcl01(epoch, batch_size, *_):
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = o.NAG(3.0,0.9)
     # optimizer = o.ADAM()
-    from os.path import dirname, basename, isfile, join
-    import glob
-    modules = glob.glob(join(dirname(__file__), "*.py"))
-    sample = [ basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')]
-    print (sample)
     optimizer = ADAM_MAX()
     # optimizer = o.SGD(3.0)
     num_epochs = epoch
