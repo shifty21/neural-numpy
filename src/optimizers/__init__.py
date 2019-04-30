@@ -1,7 +1,8 @@
-from .input_layer import InputLayer
-from .convolutional_layer import ConvolutionalLayer
-from .fully_connected_layer import FullyConnectedLayer
-from .max_pooling_layer import MaxPoolingLayer
+from .nag import NAG
+from .sgd import SGD
+from .adam import ADAM
+from .adam_max import ADAM_MAX
+from .sgd_momentum import SGD_Momentum
 
 from os.path import dirname, basename, isfile, join
 import glob

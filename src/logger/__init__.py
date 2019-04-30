@@ -1,7 +1,4 @@
-from .input_layer import InputLayer
-from .convolutional_layer import ConvolutionalLayer
-from .fully_connected_layer import FullyConnectedLayer
-from .max_pooling_layer import MaxPoolingLayer
+from .logger import Logger
 
 from os.path import dirname, basename, isfile, join
 import glob

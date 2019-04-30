@@ -6,7 +6,6 @@ from logger import Logger
 
 class Train:
 
-    
     def train(self,net, optimizer, num_epochs, batch_size, trn_set, tst_set, vld_set=None):
         assert isinstance(net, NeuralNetwork)
         assert num_epochs > 0

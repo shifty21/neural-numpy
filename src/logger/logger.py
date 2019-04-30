@@ -7,12 +7,14 @@ import os
 class Logger:
 
     def __init__(self):
-        if (os.path.exists("config.yaml")):
-            with open ("config.yaml","r") as f:
+        file = os.path.dirname(os.path.abspath(__file__)) + "/config.yaml"
+        print (dir)
+        if (os.path.exists(file)):
+            with open (file,"r") as f:
                 config = yaml.safe_load(f.read())
                 logging.config.dictConfig(config)
         else:
-            logging.basicConfig(logging.INFO)
+            logging.basicConfig()
 
 
     def get_logger(name):

@@ -6,7 +6,6 @@ import sys
 import numpy as np
 
 import functions as f
-import optimizers as o
 import network as n
 import utils as u
 from logger import Logger
@@ -15,7 +14,7 @@ from layers import InputLayer
 from layers import FullyConnectedLayer
 from layers import MaxPoolingLayer
 from layers import ConvolutionalLayer
-
+from optimizers import ADAM_MAX
 
 def fcl01(epoch, batch_size, *_):
     net = n.NeuralNetwork([
@@ -26,7 +25,12 @@ def fcl01(epoch, batch_size, *_):
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = o.NAG(3.0,0.9)
     # optimizer = o.ADAM()
-    optimizer = o.ADAM_MAX()
+    from os.path import dirname, basename, isfile, join
+    import glob
+    modules = glob.glob(join(dirname(__file__), "*.py"))
+    sample = [ basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')]
+    print (sample)
+    optimizer = ADAM_MAX()
     # optimizer = o.SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
@@ -37,7 +41,7 @@ def fcl02(epoch,batch_size,*_):
         InputLayer(height=28, width=28),
         FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.softmax)
     ], f.log_likelihood)
-    optimizer = o.SGD(0.1)
+    optimizer = SGD(0.1)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
@@ -51,7 +55,7 @@ def cnn01(epoch,batch_size,kernel_size,pool_size):
         FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax)
     ], f.log_likelihood)
     # optimizer = o.SGD(0.1)
-    optimizer = o.ADAM_MAX()
+    optimizer = ADAM_MAX()
     # optimizer = o.ADAM()
     num_epochs = epoch
     batch_size = batch_size
@@ -65,7 +69,7 @@ def cnn02(epoch,batch_size,kernel_size,pool_size):
         FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax)
     ], f.categorical_crossentropy)
     # optimizer = o.SGD(0.1)
-    optimizer = o.ADAM()
+    optimizer = ADAM()
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
