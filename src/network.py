@@ -4,7 +4,8 @@ import layers as l
 import utils as u
 import time
 from logger import Logger
-
+from regularization import L1Regularization
+from regularization import L2Regularization
 
 class NeuralNetwork():
 
@@ -42,6 +43,8 @@ class NeuralNetwork():
 
             # propagate the error backward
             loss = self.loss_func(self.output_layer.a, y)
+            # loss = L1Regularization.apply_regularization(loss,self.output_layer.w)
+            loss = L2Regularization.apply_regularization(loss,self.output_layer.w)
             delta = loss * self.output_layer.der_act_func(self.output_layer.z, y)
             for prev_layer, layer in reversed(self.layers):
                 der_w, der_b, prev_delta = layer.backpropagate(prev_layer, delta)

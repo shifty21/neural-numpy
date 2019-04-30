@@ -23,7 +23,7 @@ def fcl01(epoch, batch_size, *_):
     # optimizer = o.NAG(3.0,0.9)
     # optimizer = o.ADAM()
     optimizer = ADAM_MAX()
-    # optimizer = o.SGD(3.0)
+    # optimizer = SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
