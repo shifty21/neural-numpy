@@ -10,7 +10,9 @@ from regularization import L2Regularization
 class NeuralNetwork():
 
 
-    def __init__(self, layers, loss_func):
+    def __init__(self, layers, loss_func, regularization):
+        self.log = Logger.get_logger(__name__)
+        self.log.info('NeuralNetwork Initialized')
         assert len(layers) > 0
 
         assert isinstance(layers[0], l.InputLayer)
@@ -22,9 +24,16 @@ class NeuralNetwork():
         self.layers = [(prev_layer, layer) for prev_layer, layer in zip(layers[:-1], layers[1:])]
 
         self.loss_func = loss_func
+        self.regularization = regularization
+        if (regularization == None):
+            self.log.info('No Regularization provided')
+        else :
+            self.log.info("Regularization :- " + regularization)
 
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
+
+        self.log.info('NeuralNetwork Initialized')
 
 
     def feedforward(self, x):
@@ -43,8 +52,13 @@ class NeuralNetwork():
 
             # propagate the error backward
             loss = self.loss_func(self.output_layer.a, y)
-            # loss = L1Regularization.apply_regularization(loss,self.output_layer.w)
-            loss = L2Regularization.apply_regularization(loss,self.output_layer.w)
+            if (self.regularization == "l1"):
+                self.log.debug("Applying L1 regularization")
+                loss = L1Regularization.apply_regularization(loss,self.output_layer.w)
+            elif (self.regularization == "l2"):
+                self.log.debug("Applying L2 regularization")
+                loss = L2Regularization.apply_regularization(loss,self.output_layer.w)
+
             delta = loss * self.output_layer.der_act_func(self.output_layer.z, y)
             for prev_layer, layer in reversed(self.layers):
                 der_w, der_b, prev_delta = layer.backpropagate(prev_layer, delta)
