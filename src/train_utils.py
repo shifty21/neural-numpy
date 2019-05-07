@@ -5,8 +5,11 @@ from logger import Logger
 
 
 class Train:
+    def __init__ (self):
+        self.log = Logger.get_logger(__name__)
 
     def train(self,net, optimizer, num_epochs, batch_size, trn_set, tst_set, vld_set=None):
+
         assert isinstance(net, NeuralNetwork)
         assert num_epochs > 0
         assert batch_size > 0
@@ -28,10 +31,12 @@ class Train:
                 u.print("Epoch %02d %s [%d/%d] > Testing..." % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
                 accuracy = self.test(net, vld_set)
                 u.print("Epoch %02d %s [%d/%d] > Validation accuracy: %0.2f%%" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs), accuracy*100), override=True)
+                self.log.debug("Validation accuracy: %0.2f%%" % (accuracy*100))
             u.print()
             u.print("Testing network...", bcolor=u.bcolors.BOLD)
             accuracy = self.test(net, tst_set)
             u.print("Test accuracy: %0.2f%%" % (accuracy*100))
+            self.log.debug("Test accuracy: %0.2f%%" % (accuracy*100))
 
 
     def test(self, net, tst_set):

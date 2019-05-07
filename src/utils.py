@@ -74,6 +74,8 @@ def bar(now, end):
     return "[%-10s]" % ("=" * int(10*now/end))
 
 def print(s="", bcolor=None, override=False):
+    log = Logger.get_logger(__name__)
+    log.info
     if print.last_override and not override:
         sys.stdout.write("\n")
     print.last_override = override

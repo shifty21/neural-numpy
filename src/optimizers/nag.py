@@ -9,7 +9,6 @@ from optimizers.interface_optimizers import Optimizer
 class NAG(Optimizer):
     def __init__(self, lr, m):
         log = Logger.get_logger(__name__)
-        log.info('Using NAG')
         self.lr = lr
         self.m = m
 

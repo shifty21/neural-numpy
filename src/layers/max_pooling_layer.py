@@ -8,12 +8,14 @@ from layers.interface_layer import Layer
 
 
 class MaxPoolingLayer(Layer):
-    def __init__(self, pool_size):
+    def __init__(self, pool_size, dropout=False):
         super().__init__()
         self.log = Logger.get_logger(__name__)
         self.log.info('MaxPoolingLayer init')
         self.pool_size = pool_size
         self.der_act_func = lambda x: x
+        self.dropout = dropout
+        self.dropout_rate = 0.9
 
     def connect_to(self, prev_layer):
         assert isinstance(prev_layer, ConvolutionalLayer)
@@ -50,6 +52,10 @@ class MaxPoolingLayer(Layer):
         assert prev_layer.a.ndim == 3
 
         prev_a = prev_layer.a
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
 
         prev_layer_fmap_size = prev_layer.height
         assert prev_layer_fmap_size % self.pool_size == 0
@@ -83,6 +89,11 @@ class MaxPoolingLayer(Layer):
         assert delta.shape == (self.depth, self.height, self.width)
 
         prev_a = prev_layer.a
+
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
 
         der_w = np.array([])
 

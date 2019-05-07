@@ -8,15 +8,17 @@ from layers.interface_layer import Layer
 
 
 class ConvolutionalLayer(Layer):
-    def __init__(self, depth, kernel_size, init_func, act_func):
+    def __init__(self, depth, kernel_size, init_func, act_func, dropout=False):
+        super().__init__()
         self.log = Logger.get_logger(__name__)
         self.log.info('ConvolutionalLayer init')
-        super().__init__()
         self.depth = depth
         self.kernel_size = kernel_size
         self.init_func = init_func
         self.act_func = act_func
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
+        self.dropout = dropout
+        self.dropout_rate = 0.9
 
 
     def connect_to(self, prev_layer):
@@ -50,6 +52,11 @@ class ConvolutionalLayer(Layer):
         assert prev_layer.a.ndim == 3
 
         prev_a = prev_layer.a
+
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
 
         filters_c_out = self.w.shape[0]
         filters_c_in = self.w.shape[1]
@@ -91,6 +98,11 @@ class ConvolutionalLayer(Layer):
         assert delta.shape[0] == self.depth
 
         prev_a = prev_layer.a
+
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
 
         der_w = np.empty_like(self.w)
         for r in range(self.depth):

@@ -12,7 +12,6 @@ class NeuralNetwork():
 
     def __init__(self, layers, loss_func, regularization):
         self.log = Logger.get_logger(__name__)
-        self.log.info('NeuralNetwork Initialized')
         assert len(layers) > 0
 
         assert isinstance(layers[0], l.InputLayer)
@@ -32,8 +31,6 @@ class NeuralNetwork():
 
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
-
-        self.log.info('NeuralNetwork Initialized')
 
 
     def feedforward(self, x):

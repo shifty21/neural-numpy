@@ -9,10 +9,9 @@ from layers.interface_layer import Layer
 
 class FullyConnectedLayer(Layer):
 
-    def __init__(self, height, init_func, act_func):
+    def __init__(self, height, init_func, act_func, dropout=False):
         super().__init__()
         self.log = Logger.get_logger(__name__)
-        self.log.info('FullyConnectedLayer init')
         self.depth = 1
         self.height = height
         self.width = 1
@@ -20,6 +19,7 @@ class FullyConnectedLayer(Layer):
         self.init_func = init_func
         self.act_func = act_func
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
+        self.dropout = dropout
         self.dropout_rate = 0.9
 
     def connect_to(self, prev_layer):
@@ -45,9 +45,10 @@ class FullyConnectedLayer(Layer):
 
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
 
-        dropout = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
-        prev_a = np.multiply(prev_a, dropout)
-        prev_a = prev_a / self.dropout_rate
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
 
         self.z = (self.w @ prev_a) + self.b
 
@@ -68,10 +69,10 @@ class FullyConnectedLayer(Layer):
 
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
 
-        dropout = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
-        prev_a = np.multiply(prev_a,dropout)
-        prev_a = prev_a / self.dropout_rate
-
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
         der_w = delta @ prev_a.T
 
         der_b = np.copy(delta)

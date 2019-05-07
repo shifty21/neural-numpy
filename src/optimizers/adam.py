@@ -9,7 +9,6 @@ from optimizers.interface_optimizers import Optimizer
 class ADAM(Optimizer):
     def __init__(self, alpha = 0.002, beta1=0.9, beta2=0.999, epsilon=1e-8):
         log = Logger.get_logger(__name__)
-        log.info('Using ADAM')
         self.beta1 = beta1
         self.beta2 = beta2
         self.epsilon = epsilon
