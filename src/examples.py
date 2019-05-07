@@ -20,9 +20,9 @@ def fcl01(regularization, epoch, batch_size, *_):
         FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.sigmoid)
     ], f.quadratic, regularization)
     # optimizer = o.SGD_Momentum(3.0,0.9)
-    # optimizer = o.NAG(3.0,0.9)
-    # optimizer = o.ADAM()
-    optimizer = ADAM_MAX()
+    # optimizer = NAG(3.0,0.9)
+    optimizer = ADAM()
+    # optimizer = ADAM_MAX()
     # optimizer = SGD(0.1)
     num_epochs = epoch
     batch_size = batch_size
