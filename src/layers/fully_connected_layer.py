@@ -3,6 +3,8 @@ import numpy as np
 import functions as f
 import utils as u
 from logger import Logger
+import os
+from dropout_factory import DropoutFactory
 
 from layers.interface_layer import Layer
 
@@ -19,6 +21,8 @@ class FullyConnectedLayer(Layer):
         self.init_func = init_func
         self.act_func = act_func
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
+        self.start_time = None
+        self.dropout_factory = DropoutFactory()
 
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
@@ -40,11 +44,17 @@ class FullyConnectedLayer(Layer):
 
         :param prev_layer: the previous layer of the network
         """
+
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
+
+        # dropout = self.dropout_factory.get_instance(prev_a.shape[0], prev_a.shape[1],0.8)
+        # prev_a = np.multiply(prev_a, dropout.dropout_array)
+        # prev_a = prev_a / 0.8
 
         self.z = (self.w @ prev_a) + self.b
 
         self.a = self.act_func(self.z)
+
         assert self.z.shape == self.a.shape
 
     def backpropagate(self, prev_layer, delta):
@@ -59,6 +69,11 @@ class FullyConnectedLayer(Layer):
         assert delta.shape == self.z.shape == self.a.shape
 
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
+
+        # dropout = self.dropout_factory.get_instance(prev_a.shape[0], prev_a.shape[1],0.8)
+        # prev_a = np.multiply(prev_a,dropout.dropout_array)
+        #
+        # prev_a = prev_a / 0.8
 
         der_w = delta @ prev_a.T
 
