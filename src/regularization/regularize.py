@@ -7,6 +7,8 @@ from datetime import datetime
 class Regularize:
 
     def __init__(self,regularization):
+        self.log = Logger.get_logger(__name__)
+        self.regularization = None
         if (regularization == None):
             self.log.info('No Regularization provided')
         else :
@@ -14,10 +16,12 @@ class Regularize:
                 self.log.error("Only possible values are l1 and l2")
                 sys.exit(-1)
             self.regularization = regularization
-        self.log = Logger.get_logger(__name__)
-        self.log.info("Initialized regularizer with " + regularization)
+            self.log.info("Initialized regularizer with " + str(regularization))
 
     def apply (self, loss, output_layer):
+        
+        if (self.regularization == None): return loss
+
         if (self.regularization == "l1"):
             self.log.debug("Applying L1 regularization")
             return L1Regularization.apply_regularization(loss,output_layer.w)
