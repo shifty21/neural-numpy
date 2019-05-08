@@ -6,6 +6,9 @@ import time
 from logger import Logger
 from regularization import L1Regularization
 from regularization import L2Regularization
+import datetime
+from regularization import Regularize
+import sys
 
 class NeuralNetwork():
 
@@ -24,11 +27,10 @@ class NeuralNetwork():
 
         self.loss_func = loss_func
         self.regularization = regularization
-        if (regularization == None):
-            self.log.info('No Regularization provided')
-        else :
-            self.log.info("Regularization :- " + regularization)
 
+        self.regularize = Regularize(regularization)
+
+        self.time = 0
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
 
@@ -49,12 +51,8 @@ class NeuralNetwork():
 
             # propagate the error backward
             loss = self.loss_func(self.output_layer.a, y)
-            if (self.regularization == "l1"):
-                self.log.debug("Applying L1 regularization")
-                loss = L1Regularization.apply_regularization(loss,self.output_layer.w)
-            elif (self.regularization == "l2"):
-                self.log.debug("Applying L2 regularization")
-                loss = L2Regularization.apply_regularization(loss,self.output_layer.w)
+            
+            loss = self.regularize.apply(loss, self.output_layer)
 
             delta = loss * self.output_layer.der_act_func(self.output_layer.z, y)
             for prev_layer, layer in reversed(self.layers):
