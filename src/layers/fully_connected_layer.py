@@ -25,15 +25,15 @@ class FullyConnectedLayer(Layer):
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
         self.b = f.zero_custom((self.n_out, 1))
-        self.vw = np.zeros_like(self.w)
-        self.vb = np.zeros_like(self.b)
+        self.vw = f.zeros_like(self.w)
+        self.vb = f.zeros_like(self.b)
 
-        self.m0w = np.zeros_like(self.w)
-        self.m0b = np.zeros_like(self.b)
-        self.mtw = np.zeros_like(self.w)
-        self.vtw = np.zeros_like(self.w)
-        self.mtb = np.zeros_like(self.b)
-        self.vtb = np.zeros_like(self.b)
+        self.m0w = f.zeros_like(self.w)
+        self.m0b = f.zeros_like(self.b)
+        self.mtw = f.zeros_like(self.w)
+        self.vtw = f.zeros_like(self.w)
+        self.mtb = f.zeros_like(self.b)
+        self.vtb = f.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
 

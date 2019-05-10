@@ -29,16 +29,16 @@ class ConvolutionalLayer(Layer):
 
         self.w = self.init_func((self.depth, prev_layer.depth, self.kernel_size, self.kernel_size),
             prev_layer.n_out, self.n_out)
-        self.b = f.zero((self.depth, 1))
-        self.vw = np.zeros_like(self.w)
-        self.vb = np.zeros_like(self.b)
+        self.b = f.zero_custom((self.depth, 1))
+        self.vw = f.zeros_like(self.w)
+        self.vb = f.zeros_like(self.b)
 
-        self.m0w = np.zeros_like(self.w)
-        self.m0b = np.zeros_like(self.b)
-        self.mtw = np.zeros_like(self.w)
-        self.vtw = np.zeros_like(self.w)
-        self.mtb = np.zeros_like(self.b)
-        self.vtb = np.zeros_like(self.b)
+        self.m0w = f.zeros_like(self.w)
+        self.m0b = f.zeros_like(self.b)
+        self.mtw = f.zeros_like(self.w)
+        self.vtw = f.zeros_like(self.w)
+        self.mtb = f.zeros_like(self.b)
+        self.vtb = f.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
         """
@@ -120,7 +120,7 @@ class ConvolutionalLayer(Layer):
         for r in range(self.depth):
             der_b[r] = np.sum(delta[r])
 
-        prev_delta = np.zeros_like(prev_a)
+        prev_delta = f.zeros_like(prev_a)
         for r in range(self.depth):
             for t in range(prev_layer.depth):
                 kernel = self.w[r, t]

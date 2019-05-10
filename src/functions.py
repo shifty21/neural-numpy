@@ -1,23 +1,49 @@
 import numpy as np
-
+from logger import Logger
+import sys
 ### weights initializations ####################################################
+class CustomDataType:
+
+    data_type = None
+    def __init__(self,dtype):
+        self.log = Logger.get_logger(__name__)
+        if (dtype == 32):
+            self.data_type = np.float32
+        elif (dtype == 64):
+            self.data_type = np.float64
+        else:
+            self.log.error("Only permited type are float32 and float64 please enter 32 or 64")
+            sys.exit(-1)
+    def get_data_type(self):
+        return self.data_type
+
+float_type = np.float64
+def InitCustomDataType(dtype):
+    dt = CustomDataType(dtype)
+    float_type = dt.get_data_type()
+
 
 def glorot_uniform(shape, num_neurons_in, num_neurons_out):
     scale = np.sqrt(6. / (num_neurons_in + num_neurons_out))
     return np.random.uniform(low=-scale, high=scale, size=shape)
 
-
 def zero(shape, *args):
-    return np.zeros(shape)
+    return np.zeros(shape,dtype=float_type)
+    # return np.zeros(shape,dtype=get_data_type())
 
-def zero_custom(shape, **kwargs):
-    kwargs.setdefault("dtype", np.float32)
-    return np.zeros(shape,dtype=kwargs.get("dtype"))
+def array(*args,**kwargs):
+    kwargs.setdefault("dtype",float_type)
+    return np.array(*args, **kwargs)
 
-def glorot_uniform_initializer(shape,num_neurons_in,num_neurons_out,**kwargs):
+def zeros_like(arr):
+    return np.zeros_like(arr)
+
+def zero_custom(shape):
+    return np.zeros(shape,dtype=float_type)
+
+def glorot_uniform_initializer(shape,num_neurons_in,num_neurons_out):
     scale = np.sqrt(6. / (num_neurons_in + num_neurons_out))
-    kwargs.setdefault("dtype", np.float32)
-    return np.random.uniform(low=-scale, high=scale, size=shape).astype(kwargs.get("dtype"))
+    return np.random.uniform(low=-scale, high=scale, size=shape).astype(float_type)
 
 
 ### activations ################################################################

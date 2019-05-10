@@ -7,6 +7,7 @@ from regularization import L1Regularization
 from regularization import L2Regularization
 from regularization import Regularize
 import time
+import functions as f
 class NeuralNetwork():
 
 
@@ -39,8 +40,8 @@ class NeuralNetwork():
 
 
     def backpropagate(self, batch, optimizer):
-        sum_der_w = {layer: np.zeros_like(layer.w) for _, layer in self.layers}
-        sum_der_b = {layer: np.zeros_like(layer.b) for _, layer in self.layers}
+        sum_der_w = {layer: f.zeros_like(layer.w) for _, layer in self.layers}
+        sum_der_b = {layer: f.zeros_like(layer.b) for _, layer in self.layers}
 
         for x, y in batch:
             self.feedforward(x)

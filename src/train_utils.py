@@ -2,7 +2,7 @@
 import numpy as np
 import utils as u
 from logger import Logger
-
+from network import NeuralNetwork
 
 class Train:
     def __init__ (self):

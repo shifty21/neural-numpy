@@ -12,6 +12,7 @@ from logger import Logger
 from train_utils import Train
 from layers import *
 from optimizers import *
+from functions import CustomDataType
 
 
 def fcl01(regularization, epoch, batch_size, *_):
@@ -43,11 +44,11 @@ def fcl02(regularization, epoch,batch_size,*_):
 def cnn01(regularization, epoch,batch_size,kernel_size,pool_size):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
-        ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform, act_func=f.sigmoid, dropout=dropout),
+        ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
         MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
-        FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax, dropout=dropout)
+        FullyConnectedLayer(height=10, init_func=f.glorot_uniform_initializer, act_func=f.softmax, dropout=dropout)
     ], f.log_likelihood, regularization)
-    # optimizer = o.SGD(0.1)
+    # optimizer = SGD(0.1)
     optimizer = ADAM()
     # optimizer = o.ADAM()
     num_epochs = epoch
@@ -78,6 +79,7 @@ if __name__ == "__main__":
     parser.add_argument("-p","--pool_size", help="MaxPoolingLayer pool size", type = int)
     parser.add_argument("-r","--regularization", help="Regularization algo. Possible values L1, L2", type = str)
     parser.add_argument("-do","--dropout", help="Enable dropout", type = str)
+    parser.add_argument("-dt","--data_type", help="Float type 32 or 64", type = int)
 
     args = parser.parse_args()
     Logger()
@@ -85,7 +87,7 @@ if __name__ == "__main__":
     np.random.seed(314)
     dropout = args.dropout
     log = Logger.get_logger(__name__)
-
+    f.InitCustomDataType(args.data_type)
     u.print("Loading '%s'..." % args.data, bcolor=u.bcolors.BOLD)
     trn_set, tst_set = u.load_mnist_npz(args.data)
 

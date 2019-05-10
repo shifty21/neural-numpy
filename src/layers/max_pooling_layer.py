@@ -26,15 +26,15 @@ class MaxPoolingLayer(Layer):
 
         self.w = np.empty((0))
         self.b = np.empty((0))
-        self.vw = np.zeros_like(self.w)
-        self.vb = np.zeros_like(self.b)
+        self.vw = f.zeros_like(self.w)
+        self.vb = f.zeros_like(self.b)
 
-        self.m0w = np.zeros_like(self.w)
-        self.m0b = np.zeros_like(self.b)
-        self.mtw = np.zeros_like(self.w)
-        self.vtw = np.zeros_like(self.w)
-        self.mtb = np.zeros_like(self.b)
-        self.vtb = np.zeros_like(self.b)
+        self.m0w = f.zeros_like(self.w)
+        self.m0b = f.zeros_like(self.b)
+        self.mtw = f.zeros_like(self.w)
+        self.vtw = f.zeros_like(self.w)
+        self.mtb = f.zeros_like(self.b)
+        self.vtb = f.zeros_like(self.b)
 
 
 
@@ -95,9 +95,9 @@ class MaxPoolingLayer(Layer):
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
 
-        der_w = np.array([])
+        der_w = f.array([])
 
-        der_b = np.array([])
+        der_b = f.array([])
 
         prev_delta = np.empty_like(prev_a)
         for r, t in zip(range(self.depth), range(prev_layer.depth)):
@@ -109,7 +109,7 @@ class MaxPoolingLayer(Layer):
                     # upsampling: the unit which was the max at the forward propagation
                     # receives all the error at backward propagation (the other units receive zero)
                     max_unit_index = np.unravel_index(prev_a_window.argmax(), prev_a_window.shape)
-                    prev_delta_window = np.zeros_like(prev_a_window)
+                    prev_delta_window = f.zeros_like(prev_a_window)
                     prev_delta_window[max_unit_index] = delta[t, i, j]
                     prev_delta[r, m:m+self.pool_size, n:n+self.pool_size] = prev_delta_window
 
