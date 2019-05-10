@@ -1,6 +1,5 @@
 import numpy as np
 
-
 ### weights initializations ####################################################
 
 def glorot_uniform(shape, num_neurons_in, num_neurons_out):
@@ -10,6 +9,15 @@ def glorot_uniform(shape, num_neurons_in, num_neurons_out):
 
 def zero(shape, *args):
     return np.zeros(shape)
+
+def zero_custom(shape, **kwargs):
+    kwargs.setdefault("dtype", np.float32)
+    return np.zeros(shape,dtype=kwargs.get("dtype"))
+
+def glorot_uniform_initializer(shape,num_neurons_in,num_neurons_out,**kwargs):
+    scale = np.sqrt(6. / (num_neurons_in + num_neurons_out))
+    kwargs.setdefault("dtype", np.float32)
+    return np.random.uniform(low=-scale, high=scale, size=shape).astype(kwargs.get("dtype"))
 
 
 ### activations ################################################################

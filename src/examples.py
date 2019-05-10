@@ -17,14 +17,14 @@ from optimizers import *
 def fcl01(regularization, epoch, batch_size, *_):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
-        FullyConnectedLayer(100, init_func=f.glorot_uniform, act_func=f.sigmoid, dropout=dropout),
-        FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.sigmoid, dropout=dropout)
+        FullyConnectedLayer(100, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
+        FullyConnectedLayer(10, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout)
     ], f.quadratic, regularization)
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = NAG(3.0,0.9)
-    optimizer = ADAM()
-    # optimizer = ADAM_MAX()
-    # optimizer = SGD(0.1)
+    # optimizer = ADAM()
+    optimizer = ADAM_MAX()
+    optimizer = SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size

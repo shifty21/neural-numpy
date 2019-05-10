@@ -24,7 +24,7 @@ class FullyConnectedLayer(Layer):
 
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
-        self.b = f.zero((self.n_out, 1))
+        self.b = f.zero_custom((self.n_out, 1))
         self.vw = np.zeros_like(self.w)
         self.vb = np.zeros_like(self.b)
 

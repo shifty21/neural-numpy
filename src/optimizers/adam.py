@@ -26,6 +26,7 @@ class ADAM(Optimizer):
                     mtw = layer.mtw/(1-math.pow(self.beta1,layer.t))
                     vtw = layer.vtw/(1-math.pow(self.beta2,layer.t))
                     layer.w += -((mtw*self.lr/(np.sqrt(vtw) + self.epsilon)))
+                    print (type(layer.w[0][0]))
                 except Exception as e:
                     print (e)
                 try:

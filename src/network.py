@@ -27,7 +27,6 @@ class NeuralNetwork():
 
         self.regularize = Regularize(regularization)
 
-        self.time = 0
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
 
