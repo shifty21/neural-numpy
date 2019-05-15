@@ -13,7 +13,7 @@ handlers:
     backupCount: 3
   console:
     class: logging.StreamHandler
-    level: DEBUG
+    level: ERROR
     formatter: default
     stream: ext://sys.stdout
   info_file_handler:
@@ -40,5 +40,5 @@ handlers:
 #     handlers: [file]
 #     propagate: no
 root:
-  level: INFO
-  handlers: ["console", "debug_file_handler", "info_file_handler", "error_file_handler"]
+  level: DEBUG
+  handlers: ["debug_file_handler", "info_file_handler", "error_file_handler","console"]

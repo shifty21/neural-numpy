@@ -8,7 +8,6 @@ from optimizers.interface_optimizers import Optimizer
 class SGD(Optimizer):
     def __init__(self, lr):
         log = Logger.get_logger(__name__)
-        log.info('Using SGD')
         self.lr = lr
 
     def apply(self, layers, sum_der_w, sum_der_b, batch_len):

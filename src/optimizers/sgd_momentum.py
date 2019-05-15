@@ -8,7 +8,6 @@ from optimizers.interface_optimizers import Optimizer
 class SGD_Momentum(Optimizer):
     def __init__(self, lr, m):
         log = Logger.get_logger(__name__)
-        log.info('Using SGD_Momentum')
         self.lr = lr
         self.m = m
 

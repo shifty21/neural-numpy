@@ -2,17 +2,17 @@ import numpy as np
 
 import layers as l
 import utils as u
-import time
 from logger import Logger
 from regularization import L1Regularization
 from regularization import L2Regularization
-
+from regularization import Regularize
+import time
+import functions as f
 class NeuralNetwork():
 
 
     def __init__(self, layers, loss_func, regularization):
         self.log = Logger.get_logger(__name__)
-        self.log.info('NeuralNetwork Initialized')
         assert len(layers) > 0
 
         assert isinstance(layers[0], l.InputLayer)
@@ -25,15 +25,11 @@ class NeuralNetwork():
 
         self.loss_func = loss_func
         self.regularization = regularization
-        if (regularization == None):
-            self.log.info('No Regularization provided')
-        else :
-            self.log.info("Regularization :- " + regularization)
+
+        self.regularize = Regularize(regularization)
 
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
-
-        self.log.info('NeuralNetwork Initialized')
 
 
     def feedforward(self, x):
@@ -44,21 +40,15 @@ class NeuralNetwork():
 
 
     def backpropagate(self, batch, optimizer):
-        sum_der_w = {layer: np.zeros_like(layer.w) for _, layer in self.layers}
-        sum_der_b = {layer: np.zeros_like(layer.b) for _, layer in self.layers}
+        sum_der_w = {layer: f.zeros_like(layer.w) for _, layer in self.layers}
+        sum_der_b = {layer: f.zeros_like(layer.b) for _, layer in self.layers}
 
         for x, y in batch:
             self.feedforward(x)
 
             # propagate the error backward
             loss = self.loss_func(self.output_layer.a, y)
-            if (self.regularization == "l1"):
-                self.log.debug("Applying L1 regularization")
-                loss = L1Regularization.apply_regularization(loss,self.output_layer.w)
-            elif (self.regularization == "l2"):
-                self.log.debug("Applying L2 regularization")
-                loss = L2Regularization.apply_regularization(loss,self.output_layer.w)
-
+            loss = self.regularize.apply(loss, self.output_layer)
             delta = loss * self.output_layer.der_act_func(self.output_layer.z, y)
             for prev_layer, layer in reversed(self.layers):
                 der_w, der_b, prev_delta = layer.backpropagate(prev_layer, delta)

@@ -9,10 +9,9 @@ from layers.interface_layer import Layer
 
 class FullyConnectedLayer(Layer):
 
-    def __init__(self, height, init_func, act_func):
+    def __init__(self, height, init_func, act_func, dropout=False):
         super().__init__()
         self.log = Logger.get_logger(__name__)
-        self.log.info('FullyConnectedLayer init')
         self.depth = 1
         self.height = height
         self.width = 1
@@ -20,20 +19,21 @@ class FullyConnectedLayer(Layer):
         self.init_func = init_func
         self.act_func = act_func
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
+        self.dropout = dropout
         self.dropout_rate = 0.9
 
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
-        self.b = f.zero((self.n_out, 1))
-        self.vw = np.zeros_like(self.w)
-        self.vb = np.zeros_like(self.b)
+        self.b = f.zero_custom((self.n_out, 1))
+        self.vw = f.zeros_like(self.w)
+        self.vb = f.zeros_like(self.b)
 
-        self.m0w = np.zeros_like(self.w)
-        self.m0b = np.zeros_like(self.b)
-        self.mtw = np.zeros_like(self.w)
-        self.vtw = np.zeros_like(self.w)
-        self.mtb = np.zeros_like(self.b)
-        self.vtb = np.zeros_like(self.b)
+        self.m0w = f.zeros_like(self.w)
+        self.m0b = f.zeros_like(self.b)
+        self.mtw = f.zeros_like(self.w)
+        self.vtw = f.zeros_like(self.w)
+        self.mtb = f.zeros_like(self.b)
+        self.vtb = f.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
 
@@ -45,9 +45,10 @@ class FullyConnectedLayer(Layer):
 
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
 
-        dropout = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
-        prev_a = np.multiply(prev_a, dropout)
-        prev_a = prev_a / self.dropout_rate
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
 
         self.z = (self.w @ prev_a) + self.b
 
@@ -68,10 +69,10 @@ class FullyConnectedLayer(Layer):
 
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
 
-        dropout = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
-        prev_a = np.multiply(prev_a,dropout)
-        prev_a = prev_a / self.dropout_rate
-
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
         der_w = delta @ prev_a.T
 
         der_b = np.copy(delta)

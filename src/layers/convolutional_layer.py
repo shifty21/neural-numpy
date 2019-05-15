@@ -8,15 +8,17 @@ from layers.interface_layer import Layer
 
 
 class ConvolutionalLayer(Layer):
-    def __init__(self, depth, kernel_size, init_func, act_func):
+    def __init__(self, depth, kernel_size, init_func, act_func, dropout=False):
+        super().__init__()
         self.log = Logger.get_logger(__name__)
         self.log.info('ConvolutionalLayer init')
-        super().__init__()
         self.depth = depth
         self.kernel_size = kernel_size
         self.init_func = init_func
         self.act_func = act_func
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
+        self.dropout = dropout
+        self.dropout_rate = 0.9
 
 
     def connect_to(self, prev_layer):
@@ -27,16 +29,16 @@ class ConvolutionalLayer(Layer):
 
         self.w = self.init_func((self.depth, prev_layer.depth, self.kernel_size, self.kernel_size),
             prev_layer.n_out, self.n_out)
-        self.b = f.zero((self.depth, 1))
-        self.vw = np.zeros_like(self.w)
-        self.vb = np.zeros_like(self.b)
+        self.b = f.zero_custom((self.depth, 1))
+        self.vw = f.zeros_like(self.w)
+        self.vb = f.zeros_like(self.b)
 
-        self.m0w = np.zeros_like(self.w)
-        self.m0b = np.zeros_like(self.b)
-        self.mtw = np.zeros_like(self.w)
-        self.vtw = np.zeros_like(self.w)
-        self.mtb = np.zeros_like(self.b)
-        self.vtb = np.zeros_like(self.b)
+        self.m0w = f.zeros_like(self.w)
+        self.m0b = f.zeros_like(self.b)
+        self.mtw = f.zeros_like(self.w)
+        self.vtw = f.zeros_like(self.w)
+        self.mtb = f.zeros_like(self.b)
+        self.vtb = f.zeros_like(self.b)
 
     def feedforward(self, prev_layer):
         """
@@ -50,6 +52,11 @@ class ConvolutionalLayer(Layer):
         assert prev_layer.a.ndim == 3
 
         prev_a = prev_layer.a
+
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
 
         filters_c_out = self.w.shape[0]
         filters_c_in = self.w.shape[1]
@@ -92,6 +99,11 @@ class ConvolutionalLayer(Layer):
 
         prev_a = prev_layer.a
 
+        if (self.dropout):
+            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            prev_a = np.multiply(prev_a, dropout_matrix)
+            prev_a = prev_a / self.dropout_rate
+
         der_w = np.empty_like(self.w)
         for r in range(self.depth):
             for t in range(prev_layer.depth):
@@ -108,7 +120,7 @@ class ConvolutionalLayer(Layer):
         for r in range(self.depth):
             der_b[r] = np.sum(delta[r])
 
-        prev_delta = np.zeros_like(prev_a)
+        prev_delta = f.zeros_like(prev_a)
         for r in range(self.depth):
             for t in range(prev_layer.depth):
                 kernel = self.w[r, t]

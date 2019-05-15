@@ -8,7 +8,6 @@ from optimizers.interface_optimizers import Optimizer
 class ADAM_MAX(Optimizer):
     def __init__(self,beta1 =0.9, beta2 = 0.999, alpha = 0.002):
         log = Logger.get_logger(__name__)
-        log.info('Using ADAM_MAX')
         self.beta1 = beta1
         self.beta2 = beta2
         self.alpha = alpha
