@@ -2,3 +2,7 @@
 */__pycache__/*
 log/
 profile_data.pyprof
+
+src/cnnprofile.pyprof
+src/cnnprofile.pyprof.log
+src/profile_data.pyprof.log
