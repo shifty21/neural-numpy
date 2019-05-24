@@ -3,7 +3,6 @@ import numpy as np
 import utils as u
 from logger import Logger
 from network import NeuralNetwork
-
 class Train:
     def __init__ (self):
         self.log = Logger.get_logger(__name__)
@@ -25,7 +24,7 @@ class Train:
             for j, batch in enumerate(batches):
                 net.backpropagate(batch, optimizer)
                 inputs_done += len(batch)
-                u.print("Epoch %02d %s [%d/%d]" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
+                #u.print("Epoch %02d %s [%d/%d]" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
             if vld_set:
                 # test the net at the end of each epoch
                 u.print("Epoch %02d %s [%d/%d] > Testing..." % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)

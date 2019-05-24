@@ -2,18 +2,17 @@
 import argparse
 import inspect
 import sys
-
+import os
 import numpy as np
 
-import functions as f
+from utils import functions as f
+from utils import utils as u
 import network as n
-import utils as u
 from logger import Logger
 from train_utils import Train
 from layers import *
 from optimizers import *
-from functions import CustomDataType
-
+from utils.functions import CustomDataType
 
 def fcl01(regularization, epoch, batch_size, *_):
     net = n.NeuralNetwork([
@@ -41,7 +40,7 @@ def fcl02(regularization, epoch,batch_size,*_):
     return net, optimizer, num_epochs, batch_size
 
 
-def cnn01(regularization, epoch,batch_size,kernel_size,pool_size):
+def cnn01(regularization, epoch,batch_size,kernel_size,pool_size ):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
         ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),

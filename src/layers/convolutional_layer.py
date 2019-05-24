@@ -1,11 +1,10 @@
 import numpy as np
 
-import functions as f
-import utils as u
+from utils import functions as f
+from utils import utils as u
 from logger import Logger
 
 from layers.interface_layer import Layer
-
 
 class ConvolutionalLayer(Layer):
     def __init__(self, depth, kernel_size, init_func, act_func, dropout=False):
@@ -71,21 +70,31 @@ class ConvolutionalLayer(Layer):
         stride = 1
         new_h = ((image_h - filters_h) // stride) + 1
         new_w = ((image_w - filters_w) // stride) + 1
-
+        range_h = range(0, image_h - filters_h + 1, self.stride_length)
+        range_w = range(0, image_w - filters_w + 1, self.stride_length)
         self.z = np.zeros((filters_c_out, new_h, new_w))
         for r in range(filters_c_out):
             for t in range(image_c):
                 filter = self.w[r, t]
-                for i, m in enumerate(range(0, image_h - filters_h + 1, self.stride_length)):
-                    for j, n in enumerate(range(0, image_w - filters_w + 1, self.stride_length)):
+                filter_ravel =  filter.ravel()
+                for i, m in enumerate(range_h):
+                    for j, n in enumerate(range_w):
                         prev_a_window = prev_a[t, m:m+filters_h, n:n+filters_w]
-                        self.z[r, i, j] += np.correlate(prev_a_window.ravel(), filter.ravel(), mode="valid")
+                        self.z[r, i, j] += np.correlate(prev_a_window.ravel(), filter_ravel, mode="valid")
 
         for r in range(self.depth):
             self.z[r] += self.b[r]
 
         self.a = np.vectorize(self.act_func)(self.z)
         assert self.a.shape == self.z.shape
+
+    def get_prev_a_window(self, prev_a, t, v, h):
+        return prev_a[t, v:v+self.height-self.kernel_size+1:self.stride_length,
+                      h:h+self.width -self.kernel_size+1:self.stride_length]
+
+    def delta_window(self, delta, r, v, h):
+        return delta[r, v:v+self.height-self.kernel_size+1:self.stride_length,
+                     h:h+self.width -self.kernel_size+1:self.stride_length]
 
     def backpropagate(self, prev_layer, delta):
         """
@@ -103,16 +112,13 @@ class ConvolutionalLayer(Layer):
             dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
-
         der_w = np.empty_like(self.w)
         for r in range(self.depth):
             for t in range(prev_layer.depth):
                 for h in range(self.kernel_size):
                     for v in range(self.kernel_size):
-                        prev_a_window = prev_a[t, v:v+self.height-self.kernel_size+1:self.stride_length,
-                                                  h:h+self.width -self.kernel_size+1:self.stride_length]
-                        delta_window  =  delta[r, v:v+self.height-self.kernel_size+1:self.stride_length,
-                                                  h:h+self.width -self.kernel_size+1:self.stride_length]
+                        prev_a_window = self.get_prev_a_window(prev_a, t, v, h)
+                        delta_window  = self.delta_window(delta, r, v, h)
                         assert prev_a_window.shape == delta_window.shape
                         der_w[r, t, h, v] = np.sum(prev_a_window * delta_window)
 
@@ -121,11 +127,13 @@ class ConvolutionalLayer(Layer):
             der_b[r] = np.sum(delta[r])
 
         prev_delta = f.zeros_like(prev_a)
+        range_h = range(0, prev_layer.height - self.kernel_size + 1, self.stride_length)
+        range_w = range(0, prev_layer.width - self.kernel_size + 1, self.stride_length)
         for r in range(self.depth):
             for t in range(prev_layer.depth):
                 kernel = self.w[r, t]
-                for i, m in enumerate(range(0, prev_layer.height - self.kernel_size + 1, self.stride_length)):
-                    for j, n in enumerate(range(0, prev_layer.width - self.kernel_size + 1, self.stride_length)):
+                for i, m in enumerate(range_h):
+                    for j, n in enumerate(range_w):
                         prev_delta[t, m:m+self.kernel_size, n:n+self.kernel_size] += kernel * delta[r, i, j]
         prev_delta *= prev_layer.der_act_func(prev_layer.z)
 

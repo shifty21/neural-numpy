@@ -41,4 +41,5 @@ handlers:
 #     propagate: no
 root:
   level: DEBUG
+  propagate: yes
   handlers: ["debug_file_handler", "info_file_handler", "error_file_handler","console"]

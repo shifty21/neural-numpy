@@ -7,7 +7,7 @@ from regularization import L1Regularization
 from regularization import L2Regularization
 from regularization import Regularize
 import time
-import functions as f
+from utils import functions as f
 class NeuralNetwork():
 
 
@@ -45,7 +45,6 @@ class NeuralNetwork():
 
         for x, y in batch:
             self.feedforward(x)
-
             # propagate the error backward
             loss = self.loss_func(self.output_layer.a, y)
             loss = self.regularize.apply(loss, self.output_layer)

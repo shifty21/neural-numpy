@@ -20,7 +20,7 @@ def cnn(weights):
         fcl
     ], f.categorical_crossentropy)
 
-    conv.w = weights["w"][0][0]w
+    conv.w = weights["w"][0][0]
     conv.b = np.expand_dims(weights["w"][0][1], 1)
     fcl.w = np.swapaxes(weights["w"][1][0], 0, 1)
     fcl.b = np.expand_dims(weights["w"][1][1], 1)

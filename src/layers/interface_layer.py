@@ -2,8 +2,8 @@ import abc
 
 import numpy as np
 
-import functions as f
-import utils as u
+from utils import functions as f
+from utils import utils as u
 from logger import Logger
 
 class Layer(metaclass=abc.ABCMeta):

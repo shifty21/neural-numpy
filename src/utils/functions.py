@@ -17,6 +17,7 @@ class CustomDataType:
     def get_data_type(self):
         return self.data_type
 
+
 float_type = np.float64
 def InitCustomDataType(dtype):
     dt = CustomDataType(dtype)
@@ -49,8 +50,8 @@ def glorot_uniform_initializer(shape,num_neurons_in,num_neurons_out):
 ### activations ################################################################
 
 def sigmoid(x):
-    with np.errstate(over="ignore"):
-        return 1.0 / (1.0 + np.exp(-x))
+    #with np.errstate(over="ignore"):
+    return 1.0 / (1.0 + np.exp(-x))
 
 
 def der_sigmoid(x, y=None):
