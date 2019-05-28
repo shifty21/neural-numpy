@@ -1,6 +1,9 @@
 import numpy as np
 from logger import Logger
 import sys
+
+from utils.fixed_point import FixedPoint
+
 ### weights initializations ####################################################
 class CustomDataType:
 
@@ -19,6 +22,14 @@ class CustomDataType:
 
 
 float_type = np.float64
+fixed = FixedPoint()
+
+
+def custom_multiply(array1,array2):
+    result = np.multiply(array1,array2)
+    result = fixed.right_shift(result)
+    return result
+
 def InitCustomDataType(dtype):
     dt = CustomDataType(dtype)
     float_type = dt.get_data_type()

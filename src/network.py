@@ -56,3 +56,7 @@ class NeuralNetwork():
                 delta = prev_delta
         # update weights and biases to find the local minia
         optimizer.apply(self.layers, sum_der_w, sum_der_b, len(batch))
+
+
+
+

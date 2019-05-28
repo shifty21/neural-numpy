@@ -23,7 +23,7 @@ def fcl01(regularization, epoch, batch_size, *_):
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = NAG(3.0,0.9)
     # optimizer = ADAM()
-    optimizer = ADAM_MAX()
+    #optimizer = ADAM_MAX()
     optimizer = SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
