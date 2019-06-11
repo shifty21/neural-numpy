@@ -28,11 +28,12 @@ if __name__== "__main__":
     args = parser.parse_args()
 
     trn_set, tst_set = u.load_mnist_npz(args.data)
-    weights = np.load("np_weights.npz")
-    print ("weight========== " + str(weights["w"][0][0].shape))
-    
-    print ("biases========== " + str(weights["b"].shape))
-    net = locals()[args.func](weights)
+    weights_biases = np.load("np_weights.npz")
+    print ("weight1========== " + str(weights_biases["w"][0].shape))
+    print ("weight2========== " + str(weights_biases["w"][1].shape))
+    print ("biases1========== " + str(weights_biases["b"][0].shape))
+    print ("biases2========== " + str(weights_biases["b"][1].shape))
+    net = locals()[args.func](weights_biases)
 
     print("Testing network...")
     train = Train()

@@ -76,7 +76,6 @@ class Train:
                 w.append(weights)
             if len(biases) > 0:
                 print ("printing biases for last layer: " + str(layer) + " biases shape " + str(biases.shape))
-                b.append(weights)
-            np.savez_compressed(f, w=w)
-            np.savez_compressed(f, b=b)
+                b.append(biases)
+            np.savez_compressed(f, w=w,b=b)
             print ("length of weights is " + str(len(w)) + " length of biases is " + str(len(b)))

@@ -23,6 +23,9 @@ class ConvolutionalLayer(Layer):
     def get_weights(self):
         return self.w
 
+    def get_biases(self):
+        return self.b
+
 
     def connect_to(self, prev_layer):
         self.stride_length = 1
