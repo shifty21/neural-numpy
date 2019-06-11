@@ -18,6 +18,14 @@ class MaxPoolingLayer(Layer):
         self.dropout = dropout
         self.dropout_rate = 0.9
 
+    def get_weights(self):
+        return self.w
+
+
+    def get_biases(self):
+        return self.b
+
+
     def connect_to(self, prev_layer):
         assert isinstance(prev_layer, ConvolutionalLayer)
         self.depth = prev_layer.depth

@@ -20,6 +20,10 @@ class ConvolutionalLayer(Layer):
         self.dropout_rate = 0.9
 
 
+    def get_weights(self):
+        return self.w
+
+
     def connect_to(self, prev_layer):
         self.stride_length = 1
         self.height = ((prev_layer.height - self.kernel_size) // self.stride_length) + 1
@@ -46,6 +50,9 @@ class ConvolutionalLayer(Layer):
         :param prev_layer: the previous layer of the network. The activations of the previous layer must be a list of
             feature maps, where each feature map is a 2d matrix
         """
+        print ("w.shape " + str(self.w.shape))
+        print ("depth " + str(self.depth)  + " prev_layer.depth " +
+        str(prev_layer.depth) + " self.kernel_size " + str(self.kernel_size)  + " self.kernel_size "  + str(self.kernel_size))
         assert self.w.shape == (self.depth, prev_layer.depth, self.kernel_size, self.kernel_size)
         assert self.b.shape == (self.depth, 1)
         assert prev_layer.a.ndim == 3

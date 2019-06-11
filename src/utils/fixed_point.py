@@ -4,7 +4,7 @@ from rig.type_casts import NumpyFixToFloatConverter, NumpyFloatToFixConverter
 
 class FixedPoint:
 
-    def __init__():
+    def __init__(self):
         self.float_to_fixed = NumpyFloatToFixConverter(signed=True, n_bits=8, n_frac=5)
         self.fixed_to_float = NumpyFixToFloatConverter(5)
 

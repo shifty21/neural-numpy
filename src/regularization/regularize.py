@@ -2,7 +2,7 @@ from .l2 import L2Regularization
 from .l1 import L1Regularization
 from logger import Logger
 from datetime import datetime
-
+import sys
 
 class Regularize:
 

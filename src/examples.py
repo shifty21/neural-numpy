@@ -14,7 +14,7 @@ from layers import *
 from optimizers import *
 from utils.functions import CustomDataType
 
-def fcl01(regularization, epoch, batch_size, *_):
+def fcl01(regularization, epoch, batch_size,dropout=False, *_):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
         FullyConnectedLayer(100, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),

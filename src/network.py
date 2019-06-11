@@ -31,7 +31,6 @@ class NeuralNetwork():
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
 
-
     def feedforward(self, x):
         self.input_layer.z = x
         self.input_layer.a = x

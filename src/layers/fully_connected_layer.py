@@ -22,6 +22,12 @@ class FullyConnectedLayer(Layer):
         self.dropout = dropout
         self.dropout_rate = 0.9
 
+    def get_weights(self):
+        return self.w
+
+    def get_biases(self):
+        return self.b
+
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
         self.b = f.zero_custom((self.n_out, 1))

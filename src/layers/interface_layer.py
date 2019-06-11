@@ -37,3 +37,12 @@ class Layer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def backpropagate(self, prev_layer, delta):
         raise AssertionError
+
+    @abc.abstractmethod
+    def get_weights(self):
+        raise AssertionError
+
+    @abc.abstractmethod
+    def get_biases(self):
+        return AssertionError
+

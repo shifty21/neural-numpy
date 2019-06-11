@@ -23,3 +23,9 @@ class InputLayer(Layer):
 
     def backpropagate(self, prev_layer, delta):
         raise AssertionError
+
+    def get_weights(self):
+        return []
+
+    def get_biases(self):
+        return []

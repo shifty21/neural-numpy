@@ -5,3 +5,5 @@ log/
 *.pyprof.log
 src/*.pyprof
 src/*.pyprof.log
+np_weights.npz
+weights.npz
