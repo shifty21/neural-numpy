@@ -14,10 +14,20 @@ import examples as e
 
 
 
-def fcl01(weights):
+def fcl01(weights_biases):
     dropout = False
     net,_,_,_ = e.fcl01(None,1,10)
     print (net)
+    temp = 1
+    for layer,next_layer in net.layers:
+        if temp==1:
+            temp = temp +1
+            continue
+        else :
+            layer.w = weights_biases["w"][0]
+            layer.b = weights_biases["b"][0]
+            next_layer.w = weights_biases["w"][1]
+            next_layer.b = weights_biases["b"][1]
     return net
 
 ################################################################################
@@ -38,4 +48,4 @@ if __name__== "__main__":
     print("Testing network...")
     train = Train()
     accuracy = train.test(net, tst_set)
-    print("Test accuracy:", accuracy)
+    print("Test accuracy:", 100*accuracy)
