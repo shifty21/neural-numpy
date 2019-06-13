@@ -61,8 +61,8 @@ def glorot_uniform_initializer(shape,num_neurons_in,num_neurons_out):
 ### activations ################################################################
 
 def sigmoid(x):
-    #with np.errstate(over="ignore"):
-    return 1.0 / (1.0 + np.exp(-x))
+    with np.errstate(over="ignore"):
+        return 1.0 / (1.0 + np.exp(-x))
 
 
 def der_sigmoid(x, y=None):

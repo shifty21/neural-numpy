@@ -9,7 +9,7 @@ class FixedPoint:
         self.fixed_to_float = NumpyFixToFloatConverter(5)
 
 
-    def convert_fixed_to_float(self,array):
+    def convert_float_to_fixed(self,array):
         return self.float_to_fixed(array)
 
 

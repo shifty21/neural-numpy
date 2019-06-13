@@ -4,7 +4,7 @@ from utils import functions as f
 from utils import utils as u
 from logger import Logger
 import os
-
+from utils import FixedPoint
 from layers.interface_layer import Layer
 
 class FullyConnectedLayer(Layer):
@@ -21,7 +21,7 @@ class FullyConnectedLayer(Layer):
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
         self.dropout = dropout
         self.dropout_rate = 0.9
-
+        self.fixedConvert = FixedPoint()
     def get_weights(self):
         return self.w
 
@@ -57,9 +57,10 @@ class FullyConnectedLayer(Layer):
             prev_a = prev_a / self.dropout_rate
 
         self.z = (self.w @ prev_a) + self.b
-
-        self.a = self.act_func(self.z)
-
+        # print ("shape of values in weight matrix ",(self.w[0][0]))
+        # print ("shape of values in baise matrix ",(self.b[0][0]))
+        self.a = self.fixedConvert.convert_fixed_to_float(self.act_func(self.z))
+        # self.a = self.act_func(self.z)
         assert self.z.shape == self.a.shape
 
     def backpropagate(self, prev_layer, delta):

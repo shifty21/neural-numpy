@@ -59,23 +59,29 @@ class Train:
             w = list()
             b = list()
             last_layer = 0
+            debug = False
             for prev_layer, layer in net.layers:
                 weights = prev_layer.get_weights()
                 biases = prev_layer.get_biases()
                 if len(weights) > 0:
-                    print ("printing weights for layer: " + str(prev_layer) + " weights shape " + str(weights.shape))
+                    if debug :
+                        print ("printing weights for layer: " + str(prev_layer) + " weights shape " + str(weights.shape))
                     w.append(weights)
                 if len(biases) > 0:
-                    print ("printing biases for layer: " + str(prev_layer) + " biases shape " + str(biases.shape))
+                    if debug:
+                        print ("printing biases for layer: " + str(prev_layer) + " biases shape " + str(biases.shape))
                     b.append(biases)
                 last_layer = layer
             weights = last_layer.get_weights()
             biases = last_layer.get_biases()
             if len(weights) > 0:
-                print ("printing weights for last layer: " + str(layer) + " weights shape " + str(weights.shape))
+                if debug:
+                    print ("printing weights for last layer: " + str(layer) + " weights shape " + str(weights.shape))
                 w.append(weights)
             if len(biases) > 0:
-                print ("printing biases for last layer: " + str(layer) + " biases shape " + str(biases.shape))
+                if debug:
+                    print ("printing biases for last layer: " + str(layer) + " biases shape " + str(biases.shape))
                 b.append(biases)
             np.savez_compressed(f, w=w,b=b)
-            print ("length of weights is " + str(len(w)) + " length of biases is " + str(len(b)))
+            if debug:
+                print ("length of weights is " + str(len(w)) + " length of biases is " + str(len(b)))
