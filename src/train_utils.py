@@ -53,6 +53,29 @@ class Train:
 
         return accuracy
 
+
+    def test_inference(self, net, tst_set):
+        assert isinstance(net, NeuralNetwork)
+
+        tst_x, tst_y = tst_set
+        tests = [(x, y) for x, y in zip(tst_x, tst_y)]
+        inputs_len = len(tests[:1])
+        inputs_done =0
+        accuracy = 0
+        for x, y in tests[:1]:
+            inputs_done+=1
+            print ("value of x ", x)
+            print ("value of y ", y)
+            net.feedforward(x)
+            u.print("%s [%d/%d] > Testing..." % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len), override=True)
+            if np.argmax(net.output_layer.a) == np.argmax(y):
+                accuracy += 1
+        accuracy /= inputs_len
+
+        return accuracy
+
+
+
     def save(self, net):
     # save weights for comparison
         with open("np_weights.npz", "wb") as f:

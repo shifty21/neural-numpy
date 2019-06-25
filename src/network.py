@@ -8,6 +8,7 @@ from regularization import L2Regularization
 from regularization import Regularize
 import time
 from utils import functions as f
+from utils import FixedPoint
 class NeuralNetwork():
 
 
@@ -31,11 +32,19 @@ class NeuralNetwork():
         for prev_layer, layer in self.layers:
             layer.connect_to(prev_layer)
 
+        self.fixedConverter = FixedPoint()
+
+
     def feedforward(self, x):
-        self.input_layer.z = x
-        self.input_layer.a = x
+        # print (x[0])
+        self.input_layer.z =self.fixedConverter.convert_float_to_fixed(x)
+        self.input_layer.a =self.fixedConverter.convert_float_to_fixed(x)
+        # print ("type of x" + str(type(self.input_layer.a[0][0][0])))
+        # self.input_layer.z = x
+        # self.input_layer.a = x
         for prev_layer, layer in self.layers:
             layer.feedforward(prev_layer)
+        # print ("output layer op ", self.output_layer.a)
 
 
     def backpropagate(self, batch, optimizer):

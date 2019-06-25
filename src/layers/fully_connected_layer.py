@@ -48,19 +48,22 @@ class FullyConnectedLayer(Layer):
 
         :param prev_layer: the previous layer of the network
         """
-
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
-
         if (self.dropout):
             dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
 
-        self.z = (self.w @ prev_a) + self.b
-        # print ("shape of values in weight matrix ",(self.w[0][0]))
-        # print ("shape of values in baise matrix ",(self.b[0][0]))
-        self.a = self.fixedConvert.convert_fixed_to_float(self.act_func(self.z))
-        # self.a = self.act_func(self.z)
+        # self.z = self.w @ prev_a + self.b
+        # wx = self.w @ prev_a
+        # print ("current layer height "  + str(self.height))
+        wx = f.matrix_multiplication(self.w,prev_a)
+        self.z = wx + self.b
+        self.a = self.act_func(self.z)
+        # print (self.a)
+        # self.a = self.fixedConvert.convert_float_to_fixed(self.a)
+        np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
+        print (self.fixedConvert.convert_float_to_fixed(self.a))
         assert self.z.shape == self.a.shape
 
     def backpropagate(self, prev_layer, delta):

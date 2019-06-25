@@ -34,6 +34,48 @@ def InitCustomDataType(dtype):
     dt = CustomDataType(dtype)
     float_type = dt.get_data_type()
 
+def matrix_multiplication(weight_matrix, data_matrix):
+    result = np.zeros((weight_matrix.shape[0], data_matrix.shape[1]),dtype=np.int16)
+    # print ("shape of weight_matrix" + str((weight_matrix).shape)
+    #        + " shape of data_matrix " + str((data_matrix).shape)
+    #        + "len of data matrix" + str(len(data_matrix))
+    #        + " value for j " + str(len(data_matrix[0])))
+    # print (data_matrix)
+    # print ("type of weight matrix " + str(type (weight_matrix[0][0]))  + " type of data matrix " + str(type(data_matrix[0][0])))
+    for i in range(len(weight_matrix)):
+        for j in range(len(data_matrix[0])):
+            dc = []
+            for k in range(len(data_matrix)):
+                # print ("type of data matdix " + str(type(data_matrix[k][j])))
+                dc.append(data_matrix[k][j])
+                # result[i][j] += weight_matrix[i][k] * data_matrix[k][j]
+                # if (result[i][j]>>3 > 127):
+                    # print ( (result[i][j]))
+               
+            # print ("type of dc" + str(np.array(dc)) + " weight matrix " + str((weight_matrix[i])))
+            # temp = np.dot(np.array(dc).astype(np.int8),weight_matrix[i].astype(np.int8))
+            temp = np.dot(dc,weight_matrix[i])
+            # print ("value of temp -- " + str((temp)) + " shifted value " + str(temp>>5))
+            result[i][j] =  temp
+
+    # result = fixed.convert_float_to_fixed(result)
+
+    return (result)
+
+
+# def matrix_multiplication(weight_matrix, data_matrix):
+#     result = np.zeros((weight_matrix.shape[0], data_matrix.shape[1]))
+#     # print ("shape of weight_matrix" + str((weight_matrix).shape)
+#     #        + " shape of data_matrix " + str((data_matrix).shape)
+#     #        + "len of data matrix" + str(len(data_matrix))
+#     #        + " value for j " + str(len(data_matrix[0])))
+#     # print (data_matrix)
+#     for i in range(len(weight_matrix)):
+#         for j in range(len(data_matrix[0])):
+#             for k in range(len(data_matrix)):
+#                 result[i][j] += weight_matrix[i][k] * data_matrix[k][j]
+#                 # print ("type " + str(type(result[i][j])))
+#     return result
 
 def glorot_uniform(shape, num_neurons_in, num_neurons_out):
     scale = np.sqrt(6. / (num_neurons_in + num_neurons_out))

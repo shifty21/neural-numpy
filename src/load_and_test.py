@@ -29,12 +29,12 @@ def fcl01(weights_biases, fixed, convert):
             continue
         else :
             if convert_to_fixed:
+                 # print ("shape of values at start in weight matrix value",(weights_biases["w"][0].shape), layer.w[0][0])
+                 # print ("shape of values at start in biase matrix value",(weights_biases["b"][0].shape), layer.b[0][0])
                  layer.w      = fixed.convert_float_to_fixed(weights_biases["w"][0])
                  layer.b      = fixed.convert_float_to_fixed(weights_biases["b"][0])
                  next_layer.w = fixed.convert_float_to_fixed(weights_biases["w"][1])
                  next_layer.b = fixed.convert_float_to_fixed(weights_biases["b"][1])
-                 print ("shape of values at start in weight matrix value",type(layer.w[0][0]), layer.w[0][0])
-                 print ("shape of values at start in biase matrix value",type(layer.b[0][0]), layer.b[0][0])
             else:
                 layer.w      = weights_biases["w"][0]
                 layer.b      = weights_biases["b"][0]
@@ -55,13 +55,13 @@ if __name__== "__main__":
     weights_biases = np.load("np_weights.npz")
     debug = False
     if debug:
-        print ("weight1========== " + str(weights_biases["w"][0].shape))
-        print ("weight2========== " + str(weights_biases["w"][1].shape))
-        print ("biases1========== " + str(weights_biases["b"][0].shape))
-        print ("biases2========== " + str(weights_biases["b"][1].shape))
+        print ("weight1========== " + str(weights_biases["w"][0]))
+        print ("weight2========== " + str(weights_biases["w"][1]))
+        print ("biases1========== " + str(weights_biases["b"][0]))
+        print ("biases2========== " + str(weights_biases["b"][1]))
     net = locals()[args.func](weights_biases, fixed, args.convert)
 
     print("Testing network...")
     train = Train()
-    accuracy = train.test(net, tst_set)
+    accuracy = train.test_inference(net, tst_set)
     print("Test accuracy:", 100*accuracy)

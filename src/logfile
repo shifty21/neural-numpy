@@ -1,0 +1,6 @@
+<network.NeuralNetwork object at 0x7fb44bddf6d8>
+shape of values at start in weight matrix value <class 'numpy.int8'> 2
+shape of values at start in biase matrix value <class 'numpy.int8'> -5
+Testing network...
+current layer height 100
+type of weight matrix <class 'numpy.int8'> type of data matrix <class 'numpy.int8'>
