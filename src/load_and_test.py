@@ -44,6 +44,7 @@ def fcl01(weights_biases, fixed, convert):
 
 ################################################################################
 if __name__== "__main__":
+    Logger()
     fixed = FixedPoint()
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--data", help="the path to the MNIST data set in .npz format (generated using utils.py)")

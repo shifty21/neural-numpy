@@ -13,7 +13,7 @@ handlers:
     backupCount: 3
   console:
     class: logging.StreamHandler
-    level: ERROR
+    level: DEBUG
     formatter: default
     stream: ext://sys.stdout
   info_file_handler:

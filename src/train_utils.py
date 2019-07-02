@@ -3,6 +3,8 @@ import numpy as np
 import utils as u
 from logger import Logger
 from network import NeuralNetwork
+from utils.fixed_point import FixedPoint
+
 class Train:
     def __init__ (self):
         self.log = Logger.get_logger(__name__)
@@ -15,7 +17,6 @@ class Train:
 
         trn_x, trn_y = trn_set
         inputs = [(x, y) for x, y in zip(trn_x, trn_y)]
-
         for i in range(num_epochs):
             np.random.shuffle(inputs)
             # divide input observations into batches
@@ -27,26 +28,29 @@ class Train:
                 u.print("Epoch %02d %s [%d/%d]" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
             if vld_set:
                 # test the net at the end of each epoch
-                u.print("Epoch %02d %s [%d/%d] > Testing..." % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
+                u.print("Epoch %02d %s [%d/%d] > Testing\n" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
                 accuracy = self.test(net, vld_set)
-                u.print("Epoch %02d %s [%d/%d] > Validation accuracy: %0.2f%%" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs), accuracy*100), override=True)
+                u.print("Epoch %02d %s [%d/%d] > Validation \n" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
                 self.log.debug("Validation accuracy: %0.2f%%" % (accuracy*100))
             u.print()
             u.print("Testing network...", bcolor=u.bcolors.BOLD)
             accuracy = self.test(net, tst_set)
             u.print("Test accuracy: %0.2f%%" % (accuracy*100))
             self.log.debug("Test accuracy: %0.2f%%" % (accuracy*100))
-        self.save(net)
+        # self.save(net)
 
     def test(self, net, tst_set):
         assert isinstance(net, NeuralNetwork)
 
         tst_x, tst_y = tst_set
         tests = [(x, y) for x, y in zip(tst_x, tst_y)]
-
         accuracy = 0
+        inputs_len = len(tests)
+        inputs_done =0
         for x, y in tests:
+            inputs_done+=1
             net.feedforward(x)
+            u.print("%s [%d/%d] > Testing..." % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len), override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1
         accuracy /= len(tests)
@@ -59,15 +63,19 @@ class Train:
 
         tst_x, tst_y = tst_set
         tests = [(x, y) for x, y in zip(tst_x, tst_y)]
-        inputs_len = len(tests[:1])
+        inputs_len = len(tests)
         inputs_done =0
         accuracy = 0
-        for x, y in tests[:1]:
+        # np.set_printoptions(suppress=True)
+        converter = FixedPoint()
+        for x, y in tests:
             inputs_done+=1
-            print ("value of x ", x)
-            print ("value of y ", y)
-            net.feedforward(x)
-            u.print("%s [%d/%d] > Testing..." % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len), override=True)
+            net.feedforward(x,True)
+            self.log.debug("output of input data type  %s \n", str(type(net.output_layer.a[0][0])))
+            # self.log.debug("argmax output %s \n",str(net.output_layer.a))
+            # self.log.debug("output of y  %s \n", str(np.argmax(y)))
+            # self.log.debug("output of y  %s \n", str(y))
+            u.print("%s [%d/%d] > Testing... >> accuracy  --- %f " % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1
         accuracy /= inputs_len

@@ -11,6 +11,7 @@ class Logger:
         print (dir)
         if (os.path.exists(file)):
             with open (file,"r") as f:
+                print ("loading config file")
                 config = yaml.safe_load(f.read())
                 logging.config.dictConfig(config)
         else:

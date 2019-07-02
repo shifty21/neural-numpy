@@ -35,15 +35,15 @@ class NeuralNetwork():
         self.fixedConverter = FixedPoint()
 
 
-    def feedforward(self, x):
-        # print (x[0])
-        self.input_layer.z =self.fixedConverter.convert_float_to_fixed(x)
-        self.input_layer.a =self.fixedConverter.convert_float_to_fixed(x)
-        # print ("type of x" + str(type(self.input_layer.a[0][0][0])))
-        # self.input_layer.z = x
-        # self.input_layer.a = x
+    def feedforward(self, x, inference = False):
+        if inference == True:
+            self.input_layer.z =self.fixedConverter.convert_float_to_fixed(x)
+            self.input_layer.a =self.fixedConverter.convert_float_to_fixed(x)
+        else :
+            self.input_layer.z = x
+            self.input_layer.a = x
         for prev_layer, layer in self.layers:
-            layer.feedforward(prev_layer)
+            layer.feedforward(prev_layer,inference)
         # print ("output layer op ", self.output_layer.a)
 
 

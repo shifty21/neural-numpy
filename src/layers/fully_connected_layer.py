@@ -41,7 +41,7 @@ class FullyConnectedLayer(Layer):
         self.mtb = f.zeros_like(self.b)
         self.vtb = f.zeros_like(self.b)
 
-    def feedforward(self, prev_layer):
+    def feedforward(self, prev_layer, inference = False):
 
         """
         Feedforward the observation through the layer
@@ -54,16 +54,16 @@ class FullyConnectedLayer(Layer):
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
 
-        # self.z = self.w @ prev_a + self.b
-        # wx = self.w @ prev_a
-        # print ("current layer height "  + str(self.height))
-        wx = f.matrix_multiplication(self.w,prev_a)
-        self.z = wx + self.b
-        self.a = self.act_func(self.z)
-        # print (self.a)
-        # self.a = self.fixedConvert.convert_float_to_fixed(self.a)
-        np.set_printoptions(formatter={'float': '{: 0.3f}'.format})
-        print (self.fixedConvert.convert_float_to_fixed(self.a))
+        if inference == True:
+            # self.log.debug("shape of prev_a %s type of data %s", prev_a.shape, type(prev_a[0][0]))
+            wx = f.matrix_multiplication(self.w,prev_a)
+            # self.log.debug("shape of wx %s and shape of bias matrix %s", str(type(wx[0][0])), str(type(self.b[0][0])))
+            self.z = wx + self.b
+            self.a = self.act_func(self.z)
+            # self.a = self.z
+        else:
+            self.z = self.w @ prev_a + self.b
+            self.a = self.act_func(self.z)
         assert self.z.shape == self.a.shape
 
     def backpropagate(self, prev_layer, delta):
