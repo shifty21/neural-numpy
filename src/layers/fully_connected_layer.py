@@ -55,12 +55,13 @@ class FullyConnectedLayer(Layer):
             prev_a = prev_a / self.dropout_rate
 
         if inference == True:
-            # self.log.debug("shape of prev_a %s type of data %s", prev_a.shape, type(prev_a[0][0]))
+            self.log.debug("type of data %s",type(prev_a[0][0]))
             wx = f.matrix_multiplication(self.w,prev_a)
-            # self.log.debug("shape of wx %s and shape of bias matrix %s", str(type(wx[0][0])), str(type(self.b[0][0])))
             self.z = wx + self.b
-            self.a = self.act_func(self.z)
-            # self.a = self.z
+            # self.log.debug("type of    z %s", type(wx[0][0]))
+            # self.a = self.act_func(self.z)
+            self.a = self.z
+            self.log.debug("type of    a %s", type(self.a[0][0]))
         else:
             self.z = self.w @ prev_a + self.b
             self.a = self.act_func(self.z)

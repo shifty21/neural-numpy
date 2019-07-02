@@ -71,11 +71,12 @@ class Train:
         for x, y in tests:
             inputs_done+=1
             net.feedforward(x,True)
-            self.log.debug("output of input data type  %s \n", str(type(net.output_layer.a[0][0])))
-            # self.log.debug("argmax output %s \n",str(net.output_layer.a))
+            # self.log.debug("output of input data type  %s \n", str(type(net.output_layer.a[0][0])))
             # self.log.debug("output of y  %s \n", str(np.argmax(y)))
             # self.log.debug("output of y  %s \n", str(y))
-            u.print("%s [%d/%d] > Testing... >> accuracy  --- %f " % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
+            # net.output_layer.a = converter.convert_fixed_to_float(net.output_layer.a)
+            # self.log.debug("argmax output type %s \n",str(type(net.output_layer.a[0][0])))
+            u.print("%s [%d/%d] > Testing... >> accuracy  --- %f \n" % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1
         accuracy /= inputs_len

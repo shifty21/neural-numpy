@@ -18,7 +18,7 @@ def fcl01(regularization, epoch, batch_size,dropout=False, **kwargs):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
         FullyConnectedLayer(100, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
-        FullyConnectedLayer(10, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout)
+        FullyConnectedLayer(10, init_func=f.glorot_uniform_initializer, act_func=f.relu, dropout=dropout)
     ], f.quadratic, regularization)
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = NAG(3.0,0.9)

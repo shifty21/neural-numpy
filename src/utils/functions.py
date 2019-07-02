@@ -58,6 +58,9 @@ def matrix_multiplication(weight_matrix, data_matrix):
             # result[i][j] = (temp_zip)
             result[i][j] = temp_zip
     # print ("max for results in multiplication " + str(np.argmax(result)))
+    # max_value = np.amax(result)
+    result = np.interp(result, (result.min(), result.max()), (-128, +127))
+    result = np.int8(result)
     return (result)
 
 
