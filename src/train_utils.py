@@ -28,15 +28,13 @@ class Train:
                 u.print("Epoch %02d %s [%d/%d]" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
             if vld_set:
                 # test the net at the end of each epoch
-                u.print("Epoch %02d %s [%d/%d] > Testing\n" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
+                u.print("Epoch %02d %s [%d/%d] > Testing \n" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
                 accuracy = self.test(net, vld_set)
                 u.print("Epoch %02d %s [%d/%d] > Validation \n" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
-                self.log.debug("Validation accuracy: %0.2f%%" % (accuracy*100))
             u.print()
             u.print("Testing network...", bcolor=u.bcolors.BOLD)
             accuracy = self.test(net, tst_set)
             u.print("Test accuracy: %0.2f%%" % (accuracy*100))
-            self.log.debug("Test accuracy: %0.2f%%" % (accuracy*100))
         # self.save(net, "np_weights.npz")
 
     def test(self, net, tst_set):
@@ -71,50 +69,37 @@ class Train:
         for x, y in tests:
             inputs_done+=1
             net.feedforward(x,True)
-            # self.log.debug("output of input data type  %s \n", str(type(net.output_layer.a[0][0])))
-            # self.log.debug("output of y  %s \n", str(np.argmax(y)))
-            # self.log.debug("output of y  %s \n", str(y))
-            # net.output_layer.a = converter.convert_fixed_to_float(net.output_layer.a)
-            # self.log.debug("argmax output type %s \n",str(type(net.output_layer.a[0][0])))
             u.print("%s [%d/%d] > Testing... >> accuracy  --- %f" % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1
         accuracy /= inputs_len
 
-        self.save(net, "retrain_weights.npz")
+        # self.save(net, "retrain_weights.npz", True)
         return accuracy
 
-
-
-    def save(self, net, filename):
-    # save weights for comparison
+    def save(self, net, filename, convert_to_float=False):
         with open(filename, "wb") as f:
             w = list()
             b = list()
             last_layer = 0
             debug = False
             for prev_layer, layer in net.layers:
-                weights = prev_layer.get_weights()
-                biases = prev_layer.get_biases()
+                weights = prev_layer.get_weights(convert_to_float)
+                biases = prev_layer.get_biases(convert_to_float)
                 if len(weights) > 0:
-                    if debug :
-                        print ("printing weights for layer: " + str(prev_layer) + " weights shape " + str(weights.shape))
+                    self.log.debug("printing weights for layer: " + str(prev_layer) + " weights shape " + str(weights.shape))
                     w.append(weights)
                 if len(biases) > 0:
-                    if debug:
-                        print ("printing biases for layer: " + str(prev_layer) + " biases shape " + str(biases.shape))
+                    self.log.debug("printing biases for layer: " + str(prev_layer) + " biases shape " + str(biases.shape))
                     b.append(biases)
                 last_layer = layer
-            weights = last_layer.get_weights()
-            biases = last_layer.get_biases()
+            weights = last_layer.get_weights(convert_to_float)
+            biases = last_layer.get_biases(convert_to_float)
             if len(weights) > 0:
-                if debug:
-                    print ("printing weights for last layer: " + str(layer) + " weights shape " + str(weights.shape))
+                self.log.debug("printing weights for last layer: " + str(layer) + " weights shape " + str(weights.shape))
                 w.append(weights)
             if len(biases) > 0:
-                if debug:
-                    print ("printing biases for last layer: " + str(layer) + " biases shape " + str(biases.shape))
+                self.log.debug("printing biases for last layer: " + str(layer) + " biases shape " + str(biases.shape))
                 b.append(biases)
             np.savez_compressed(f, w=w,b=b)
-            if debug:
-                print ("length of weights is " + str(len(w)) + " length of biases is " + str(len(b)))
+            self.log.debug("length of weights is " + str(len(w)) + " length of biases is " + str(len(b)))

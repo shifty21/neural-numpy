@@ -39,10 +39,10 @@ class Layer(metaclass=abc.ABCMeta):
         raise AssertionError
 
     @abc.abstractmethod
-    def get_weights(self):
+    def get_weights(self,convert_to_float):
         raise AssertionError
 
     @abc.abstractmethod
-    def get_biases(self):
+    def get_biases(self,convert_to_float):
         return AssertionError
 

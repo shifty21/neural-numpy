@@ -4,7 +4,7 @@ from utils import functions as f
 from utils import utils as u
 from logger import Logger
 import os
-from utils import FixedPoint
+from utils.fixed_point import FixedPoint
 from layers.interface_layer import Layer
 
 class FullyConnectedLayer(Layer):
@@ -21,11 +21,16 @@ class FullyConnectedLayer(Layer):
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
         self.dropout = dropout
         self.dropout_rate = 0.9
-        self.fixedConvert = FixedPoint()
-    def get_weights(self):
+        self.fixedConverter = FixedPoint()
+
+    def get_weights(self, convert_to_float):
+        if convert_to_float:
+            return self.fixedConverter.convert_fixed_to_float(self.w)
         return self.w
 
-    def get_biases(self):
+    def get_biases(self, convert_to_float):
+        if convert_to_float:
+            return self.fixedConverter.convert_fixed_to_float(self.b)
         return self.b
 
     def connect_to(self, prev_layer):
@@ -60,9 +65,9 @@ class FullyConnectedLayer(Layer):
             self.z = wx + self.b
             # self.log.debug("type of    z %s", type(wx[0][0]))
             # self.z = np.interp(self.z, (self.z.min(),self.z.max()), (0.000000,1.000000))
-            # self.z = self.fixedConvert.convert_fixed_to_float(self.z)
+            # self.z = self.fixedConverter.convert_fixed_to_float(self.z)
             self.a = self.act_func(self.z)
-            self.a = self.fixedConvert.convert_float_to_fixed(self.a)
+            self.a = self.fixedConverter.convert_float_to_fixed(self.a)
             # self.a = self.z
             self.log.debug("type of    a %s", type(self.a[0][0]))
         else:

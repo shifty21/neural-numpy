@@ -1,14 +1,15 @@
 import numpy as np
 from logger import Logger
 import sys
-
 from utils.fixed_point import FixedPoint
+from train_utils import Train
+import warnings
+warnings.filterwarnings("error")
 
-### weights initializations ####################################################
 class CustomDataType:
 
     data_type = None
-    def __init__(self,dtype):
+    def __init__(self,dtype=64):
         self.log = Logger.get_logger(__name__)
         if (dtype == 32):
             self.data_type = np.float32
@@ -17,18 +18,24 @@ class CustomDataType:
         else:
             self.log.error("Only permited type are float32 and float64 please enter 32 or 64")
             sys.exit(-1)
+        self.total_overflow = 0
     def get_data_type(self):
         return self.data_type
+
+    def get_overflows(self):
+        return self.total_overflow
+
+    def set_overflows(self):
+        self.total_overflow+=1
+        print ("total overflows" + str(self.total_overflow))
 
 
 float_type = np.float64
 fixed = FixedPoint()
 log = Logger.get_logger("functions")
+train = Train()
+dt = None
 
-def custom_multiply(array1,array2):
-    result = np.multiply(array1,array2)
-    result = fixed.right_shift(result)
-    return result
 
 def InitCustomDataType(dtype):
     dt = CustomDataType(dtype)
@@ -36,37 +43,25 @@ def InitCustomDataType(dtype):
 
 def matrix_multiplication(weight_matrix, data_matrix):
     result = np.zeros((weight_matrix.shape [0], data_matrix.shape[1]),dtype=np.int16)
-    # result = np.zeros((weight_matrix.shape[0], data_matrix.shape[1]))
-    # print("type of weight matrix " + str(type(weight_matrix[0][0]))  + " type of data matrix " + str(type(data_matrix[0][0])))
     for i in range(len(weight_matrix)):
         for j in range(len(data_matrix[0])):
             dc = []
             for k in range(len(data_matrix)):
                 dc.append(data_matrix[k][j])
-            # temp = np.dot(dc,weigh t_matrix[i])
-            overflow = 0
             temp_zip = 0
             for x,y in zip(dc,weight_matrix[i]):
-                # if (x*y>32767):
-                    # overflow = overflow + 1
-                #     temp_zip+=32767
-                # else:
                 temp_zip+= mul(x,y)
-
-            # print ("no of overflow"  + str(overflow) + " value of temp_zip " +str(temp_zip) )
-            # print("type of temp -- " + str(type(temp_zip)) + " value of j " + str(j))
-            # result[i][j] = (temp_zip)
             result[i][j] = temp_zip
-    # print ("type of multiplication result " + str(type(result[0][0])))
-    # max_value = np.amax(result)
-    # result = np.interp(result, (result.min(), result.max()), (-128, +127))
-    # print ("value of result after interpolation -- " + str(result))
-    # result = np.int8(result)
     return (result)
 
 def mul(x,y):
-
-    return np.int16(x)*np.int16(y)
+    result = np.int8(0)
+    try:
+        result = x*y
+    except RuntimeWarning:
+        dt.set_overflow()
+        return np.int16(x)*np.int16(y)
+    return result
 
 def glorot_uniform(shape, num_neurons_in, num_neurons_out):
     scale = np.sqrt(6. / (num_neurons_in + num_neurons_out))
@@ -94,9 +89,8 @@ def glorot_uniform_initializer(shape,num_neurons_in,num_neurons_out):
 ### activations ################################################################
 
 def sigmoid(x):
-    # with  np.errstate(over="ignore"):
-    return 1.0 / (1.0 + np.exp(-x))
-
+    with  np.errstate(over="ignore"):
+        return 1.0 / (1.0 + np.exp(-x))
 
 def der_sigmoid(x, y=None):
     s = sigmoid(x)
@@ -121,9 +115,8 @@ def relu(x):
     return x
 
 def der_relu(x, y = None):
-    s = relu(x)
-    return s*(1-s)
-
+    x[x>0] = 1
+    return x
 
 ### objectives #################################################################
 

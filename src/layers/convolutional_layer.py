@@ -6,6 +6,8 @@ from logger import Logger
 
 from layers.interface_layer import Layer
 
+from utils.fixed_point import FixedPoint
+
 class ConvolutionalLayer(Layer):
     def __init__(self, depth, kernel_size, init_func, act_func, dropout=False):
         super().__init__()
@@ -18,12 +20,16 @@ class ConvolutionalLayer(Layer):
         self.der_act_func = getattr(f, "der_%s" % act_func.__name__)
         self.dropout = dropout
         self.dropout_rate = 0.9
+        self.fixedConverter = FixedPoint()
 
-
-    def get_weights(self):
+    def get_weights(self, convert_to_float):
+        if convert_to_float:
+            return self.fixedConverter.convert_fixed_to_float(self.w)
         return self.w
 
-    def get_biases(self):
+    def get_biases(self, convert_to_float):
+        if convert_to_float:
+            return self.fixedConverter.convert_fixed_to_float(self.b)
         return self.b
 
 

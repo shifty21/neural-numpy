@@ -8,7 +8,7 @@ from regularization import L2Regularization
 from regularization import Regularize
 import time
 from utils import functions as f
-from utils import FixedPoint
+from utils.fixed_point import FixedPoint
 class NeuralNetwork():
 
 
