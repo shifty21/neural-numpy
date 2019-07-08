@@ -51,18 +51,22 @@ def matrix_multiplication(weight_matrix, data_matrix):
                     # overflow = overflow + 1
                 #     temp_zip+=32767
                 # else:
-                temp_zip+= np.int16(x)*np.int16(y)
+                temp_zip+= mul(x,y)
 
             # print ("no of overflow"  + str(overflow) + " value of temp_zip " +str(temp_zip) )
             # print("type of temp -- " + str(type(temp_zip)) + " value of j " + str(j))
             # result[i][j] = (temp_zip)
             result[i][j] = temp_zip
-    # print ("max for results in multiplication " + str(np.argmax(result)))
+    # print ("type of multiplication result " + str(type(result[0][0])))
     # max_value = np.amax(result)
-    result = np.interp(result, (result.min(), result.max()), (-128, +127))
-    result = np.int8(result)
+    # result = np.interp(result, (result.min(), result.max()), (-128, +127))
+    # print ("value of result after interpolation -- " + str(result))
+    # result = np.int8(result)
     return (result)
 
+def mul(x,y):
+
+    return np.int16(x)*np.int16(y)
 
 def glorot_uniform(shape, num_neurons_in, num_neurons_out):
     scale = np.sqrt(6. / (num_neurons_in + num_neurons_out))

@@ -37,6 +37,7 @@ class NeuralNetwork():
 
     def feedforward(self, x, inference = False):
         if inference == True:
+            # self.log.debug("max value of input -- %f  and min value of input -- %f", x.max(),x.min())
             self.input_layer.z =self.fixedConverter.convert_float_to_fixed(x)
             self.input_layer.a =self.fixedConverter.convert_float_to_fixed(x)
         else :

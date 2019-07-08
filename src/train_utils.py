@@ -37,7 +37,7 @@ class Train:
             accuracy = self.test(net, tst_set)
             u.print("Test accuracy: %0.2f%%" % (accuracy*100))
             self.log.debug("Test accuracy: %0.2f%%" % (accuracy*100))
-        # self.save(net)
+        # self.save(net, "np_weights.npz")
 
     def test(self, net, tst_set):
         assert isinstance(net, NeuralNetwork)
@@ -76,18 +76,19 @@ class Train:
             # self.log.debug("output of y  %s \n", str(y))
             # net.output_layer.a = converter.convert_fixed_to_float(net.output_layer.a)
             # self.log.debug("argmax output type %s \n",str(type(net.output_layer.a[0][0])))
-            u.print("%s [%d/%d] > Testing... >> accuracy  --- %f \n" % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
+            u.print("%s [%d/%d] > Testing... >> accuracy  --- %f" % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1
         accuracy /= inputs_len
 
+        self.save(net, "retrain_weights.npz")
         return accuracy
 
 
 
-    def save(self, net):
+    def save(self, net, filename):
     # save weights for comparison
-        with open("np_weights.npz", "wb") as f:
+        with open(filename, "wb") as f:
             w = list()
             b = list()
             last_layer = 0

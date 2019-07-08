@@ -59,8 +59,11 @@ class FullyConnectedLayer(Layer):
             wx = f.matrix_multiplication(self.w,prev_a)
             self.z = wx + self.b
             # self.log.debug("type of    z %s", type(wx[0][0]))
-            # self.a = self.act_func(self.z)
-            self.a = self.z
+            # self.z = np.interp(self.z, (self.z.min(),self.z.max()), (0.000000,1.000000))
+            # self.z = self.fixedConvert.convert_fixed_to_float(self.z)
+            self.a = self.act_func(self.z)
+            self.a = self.fixedConvert.convert_float_to_fixed(self.a)
+            # self.a = self.z
             self.log.debug("type of    a %s", type(self.a[0][0]))
         else:
             self.z = self.w @ prev_a + self.b

@@ -7,7 +7,7 @@ class FixedPoint:
         self.float_to_fixed = NumpyFloatToFixConverter(signed=True, n_bits=8, n_frac=4)
         self.fixed_to_float = NumpyFixToFloatConverter(4)
         self.float64_to_fixed = NumpyFloatToFixConverter(signed=True,n_bits=8,n_frac=7)
-        self.fixed_to_float = NumpyFixToFloatConverter(7)
+        # self.fixed_to_float = NumpyFixToFloatConverter(7)
 
 
     def convert_float_to_fixed(self,array):
