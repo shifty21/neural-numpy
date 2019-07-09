@@ -54,6 +54,7 @@ if __name__== "__main__":
 
     trn_set, tst_set = u.load_mnist_npz(args.data)
     weights_biases = np.load("np_weights.npz")
+    # weights_biases = np.load("retrain_weights.npz")
     debug = False
     if debug:
         print ("weight1========== " + str(weights_biases["w"][0]))

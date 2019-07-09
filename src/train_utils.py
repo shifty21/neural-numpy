@@ -4,6 +4,8 @@ import utils as u
 from logger import Logger
 from network import NeuralNetwork
 from utils.fixed_point import FixedPoint
+from utils.custom_multiplier import CustomMultiplier
+
 
 class Train:
     def __init__ (self):
@@ -31,6 +33,7 @@ class Train:
                 u.print("Epoch %02d %s [%d/%d] > Testing \n" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
                 accuracy = self.test(net, vld_set)
                 u.print("Epoch %02d %s [%d/%d] > Validation \n" % (i+1, u.bar(inputs_done, len(inputs)), inputs_done, len(inputs)), override=True)
+
             u.print()
             u.print("Testing network...", bcolor=u.bcolors.BOLD)
             accuracy = self.test(net, tst_set)
@@ -61,20 +64,21 @@ class Train:
 
         tst_x, tst_y = tst_set
         tests = [(x, y) for x, y in zip(tst_x, tst_y)]
-        inputs_len = len(tests)
+        inputs_len = len(tests[:1])
         inputs_done =0
         accuracy = 0
         # np.set_printoptions(suppress=True)
         converter = FixedPoint()
-        for x, y in tests:
+        for x, y in tests[:1]:
             inputs_done+=1
             net.feedforward(x,True)
             u.print("%s [%d/%d] > Testing... >> accuracy  --- %f" % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1
         accuracy /= inputs_len
-
+        CustomMultiplier.close()
         # self.save(net, "retrain_weights.npz", True)
+
         return accuracy
 
     def save(self, net, filename, convert_to_float=False):

@@ -6,7 +6,7 @@ from logger import Logger
 import os
 from utils.fixed_point import FixedPoint
 from layers.interface_layer import Layer
-
+from utils.custom_multiplier import CustomMultiplier
 class FullyConnectedLayer(Layer):
 
     def __init__(self, height, init_func, act_func, dropout=False):
@@ -22,6 +22,7 @@ class FullyConnectedLayer(Layer):
         self.dropout = dropout
         self.dropout_rate = 0.9
         self.fixedConverter = FixedPoint()
+        self.customMultiplier = CustomMultiplier()
 
     def get_weights(self, convert_to_float):
         if convert_to_float:
@@ -61,7 +62,7 @@ class FullyConnectedLayer(Layer):
 
         if inference == True:
             self.log.debug("type of data %s",type(prev_a[0][0]))
-            wx = f.matrix_multiplication(self.w,prev_a)
+            wx = self.customMultiplier.matrix_multiplication(self.w,prev_a)
             self.z = wx + self.b
             # self.log.debug("type of    z %s", type(wx[0][0]))
             # self.z = np.interp(self.z, (self.z.min(),self.z.max()), (0.000000,1.000000))

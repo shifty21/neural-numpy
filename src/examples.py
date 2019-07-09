@@ -12,7 +12,6 @@ from logger import Logger
 from train_utils import Train
 from layers import *
 from optimizers import *
-from utils.functions import CustomDataType
 from utils.fixed_point import FixedPoint
 
 def fcl01(regularization, epoch, batch_size,dropout=False, *_):
@@ -111,7 +110,7 @@ if __name__ == "__main__":
     np.random.seed(314)
     dropout = args.dropout
     log = Logger.get_logger(__name__)
-    f.InitCustomDataType(args.data_type)
+    
     u.print("Loading '%s'..." % args.data, bcolor=u.bcolors.BOLD)
     trn_set, tst_set = u.load_mnist_npz(args.data)
 
