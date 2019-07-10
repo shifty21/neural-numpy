@@ -47,7 +47,7 @@ class FullyConnectedLayer(Layer):
         self.mtb = f.zeros_like(self.b)
         self.vtb = f.zeros_like(self.b)
 
-    def feedforward(self, prev_layer, inference = False):
+    def feedforward(self, prev_layer, inference_custom = False):
 
         """
         Feedforward the observation through the layer
@@ -60,17 +60,17 @@ class FullyConnectedLayer(Layer):
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
 
-        if inference == True:
-            self.log.debug("type of data %s",type(prev_a[0][0]))
+        if inference_custom == True:
+            # self.log.debug("type of data %s",type(prev_a[0][0]))
             wx = self.customMultiplier.matrix_multiplication(self.w,prev_a)
             self.z = wx + self.b
             # self.log.debug("type of    z %s", type(wx[0][0]))
             # self.z = np.interp(self.z, (self.z.min(),self.z.max()), (0.000000,1.000000))
-            # self.z = self.fixedConverter.convert_fixed_to_float(self.z)
+            self.z = self.fixedConverter.convert_fixed_to_float(self.z)
             self.a = self.act_func(self.z)
             self.a = self.fixedConverter.convert_float_to_fixed(self.a)
             # self.a = self.z
-            self.log.debug("type of    a %s", type(self.a[0][0]))
+            # self.log.debug("type of    a %s", type(self.a[0][0]))
         else:
             self.z = self.w @ prev_a + self.b
             self.a = self.act_func(self.z)

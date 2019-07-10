@@ -35,8 +35,8 @@ class NeuralNetwork():
         self.fixedConverter = FixedPoint()
 
 
-    def feedforward(self, x, inference = False):
-        if inference == True:
+    def feedforward(self, x, inference_custom = False):
+        if inference_custom == True:
             # self.log.debug("max value of input -- %f  and min value of input -- %f", x.max(),x.min())
             self.input_layer.z =self.fixedConverter.convert_float_to_fixed(x)
             self.input_layer.a =self.fixedConverter.convert_float_to_fixed(x)
@@ -44,7 +44,7 @@ class NeuralNetwork():
             self.input_layer.z = x
             self.input_layer.a = x
         for prev_layer, layer in self.layers:
-            layer.feedforward(prev_layer,inference)
+            layer.feedforward(prev_layer,inference_custom)
         # print ("output layer op ", self.output_layer.a)
 
 

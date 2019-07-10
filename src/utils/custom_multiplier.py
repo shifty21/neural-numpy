@@ -51,10 +51,10 @@ class CustomMultiplier:
         result = np.int8(0)
         try:
             result = x*y
-            CustomMultiplier.set_non_overflow()
+            # CustomMultiplier.set_non_overflow()
         except RuntimeWarning:
-            CustomMultiplier.set_total_overflow()
+            # CustomMultiplier.set_total_overflow()
             return np.int16(x)*np.int16(y)
-
-        return np.int16(x)*np.int16(y)
+        return result
+        # return np.int16(x)*np.int16(y)
 

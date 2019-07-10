@@ -29,6 +29,23 @@ def fcl01(regularization, epoch, batch_size,dropout=False, *_):
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
 
+def fcl010(regularization, epoch, batch_size,dropout=False, *_):
+    net = n.NeuralNetwork([
+        InputLayer(height=28, width=28),
+        FullyConnectedLayer(512, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
+        FullyConnectedLayer(256, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
+        FullyConnectedLayer(128, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
+        FullyConnectedLayer(10, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout)
+    ], f.quadratic, regularization)
+    # optimizer = o.SGD_Momentum(3.0,0.9)
+    # optimizer = NAG(3.0,0.9)
+    # optimizer = ADAM()
+    # optimizer = ADAM_MAX()
+    optimizer = SGD(3.0)
+    num_epochs = epoch
+    batch_size = batch_size
+    return net, optimizer, num_epochs, batch_size
+
 
 def fcl02(regularization, epoch,batch_size,*_):
     net = n.NeuralNetwork([
@@ -110,7 +127,6 @@ if __name__ == "__main__":
     np.random.seed(314)
     dropout = args.dropout
     log = Logger.get_logger(__name__)
-    
     u.print("Loading '%s'..." % args.data, bcolor=u.bcolors.BOLD)
     trn_set, tst_set = u.load_mnist_npz(args.data)
 

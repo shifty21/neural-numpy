@@ -38,7 +38,7 @@ class Train:
             u.print("Testing network...", bcolor=u.bcolors.BOLD)
             accuracy = self.test(net, tst_set)
             u.print("Test accuracy: %0.2f%%" % (accuracy*100))
-        # self.save(net, "np_weights.npz")
+        self.save(net, "np_weights.npz")
 
     def test(self, net, tst_set):
         assert isinstance(net, NeuralNetwork)
@@ -59,25 +59,25 @@ class Train:
         return accuracy
 
 
-    def test_inference(self, net, tst_set):
+    def test_inference(self, net, tst_set, inference_custom):
         assert isinstance(net, NeuralNetwork)
 
         tst_x, tst_y = tst_set
         tests = [(x, y) for x, y in zip(tst_x, tst_y)]
-        inputs_len = len(tests[:1])
+        inputs_len = len(tests)
         inputs_done =0
         accuracy = 0
         # np.set_printoptions(suppress=True)
         converter = FixedPoint()
-        for x, y in tests[:1]:
+        for x, y in tests:
             inputs_done+=1
-            net.feedforward(x,True)
+            net.feedforward(x,inference_custom)
             u.print("%s [%d/%d] > Testing... >> accuracy  --- %f" % (u.bar(inputs_done, inputs_len), inputs_done, inputs_len, accuracy/inputs_done*100), override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1
         accuracy /= inputs_len
         CustomMultiplier.close()
-        # self.save(net, "retrain_weights.npz", True)
+        self.save(net, "retrain_weights.npz", True)
 
         return accuracy
 
