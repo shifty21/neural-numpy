@@ -14,11 +14,20 @@ from layers import *
 from optimizers import *
 from utils.fixed_point import FixedPoint
 
-def fcl01(regularization, epoch, batch_size,dropout=False, *_):
+
+def fcl01(regularization, epoch, batch_size, dropout=False, *_):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
-        FullyConnectedLayer(100, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
-        FullyConnectedLayer(10, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout)
+        FullyConnectedLayer(
+            100,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout),
+        FullyConnectedLayer(
+            10,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout)
     ], f.quadratic, regularization)
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = NAG(3.0,0.9)
@@ -29,13 +38,30 @@ def fcl01(regularization, epoch, batch_size,dropout=False, *_):
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
 
-def fcl010(regularization, epoch, batch_size,dropout=False, *_):
+
+def fcl010(regularization, epoch, batch_size, dropout=False, *_):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
-        FullyConnectedLayer(512, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
-        FullyConnectedLayer(256, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
-        FullyConnectedLayer(128, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
-        FullyConnectedLayer(10, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout)
+        FullyConnectedLayer(
+            512,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout),
+        FullyConnectedLayer(
+            256,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout),
+        FullyConnectedLayer(
+            128,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout),
+        FullyConnectedLayer(
+            10,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout)
     ], f.quadratic, regularization)
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = NAG(3.0,0.9)
@@ -47,10 +73,14 @@ def fcl010(regularization, epoch, batch_size,dropout=False, *_):
     return net, optimizer, num_epochs, batch_size
 
 
-def fcl02(regularization, epoch,batch_size,*_):
+def fcl02(regularization, epoch, batch_size, *_):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
-        FullyConnectedLayer(10, init_func=f.glorot_uniform, act_func=f.softmax, dropout=dropout)
+        FullyConnectedLayer(
+            10,
+            init_func=f.glorot_uniform,
+            act_func=f.softmax,
+            dropout=dropout)
     ], f.log_likelihood, regularization)
     optimizer = SGD(0.1)
     num_epochs = epoch
@@ -58,12 +88,21 @@ def fcl02(regularization, epoch,batch_size,*_):
     return net, optimizer, num_epochs, batch_size
 
 
-def cnn01(regularization, epoch,batch_size,kernel_size,pool_size ):
+def cnn01(regularization, epoch, batch_size, kernel_size, pool_size):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
-        ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform_initializer, act_func=f.sigmoid, dropout=dropout),
+        ConvolutionalLayer(
+            2,
+            kernel_size=kernel_size,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout),
         MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
-        FullyConnectedLayer(height=10, init_func=f.glorot_uniform_initializer, act_func=f.softmax, dropout=dropout)
+        FullyConnectedLayer(
+            height=10,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.softmax,
+            dropout=dropout)
     ], f.log_likelihood, regularization)
     # optimizer = SGD(0.1)
     optimizer = ADAM()
@@ -72,12 +111,22 @@ def cnn01(regularization, epoch,batch_size,kernel_size,pool_size ):
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
 
-def cnn02(regularization, epoch,batch_size,kernel_size,pool_size):
+
+def cnn02(regularization, epoch, batch_size, kernel_size, pool_size):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
-        ConvolutionalLayer(2, kernel_size=kernel_size, init_func=f.glorot_uniform, act_func=f.sigmoid, dropout=dropout),
+        ConvolutionalLayer(
+            2,
+            kernel_size=kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.sigmoid,
+            dropout=dropout),
         MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
-        FullyConnectedLayer(height=10, init_func=f.glorot_uniform, act_func=f.softmax, dropout=dropout)
+        FullyConnectedLayer(
+            height=10,
+            init_func=f.glorot_uniform,
+            act_func=f.softmax,
+            dropout=dropout)
     ], f.categorical_crossentropy, regularization)
     # optimizer = o.SGD(0.1)
     optimizer = ADAM()
@@ -87,22 +136,22 @@ def cnn02(regularization, epoch,batch_size,kernel_size,pool_size):
 
 
 def load_weights_and_biases(net):
-    print ("Loading weights and Biases for retraining")
+    print("Loading weights and Biases for retraining")
     weights_biases = np.load("retrain_weights.npz")
     debug = False
-    fixedConverter =FixedPoint()
+    fixedConverter = FixedPoint()
     print("weight1========== " + str(weights_biases["w"][0]))
     print("weight2========== " + str(weights_biases["w"][1]))
     print("biases1========== " + str(weights_biases["b"][0]))
     print("biases2========== " + str(weights_biases["b"][1]))
     temp = 1
-    for layer,next_layer in net.layers:
-        if temp==1:
+    for layer, next_layer in net.layers:
+        if temp == 1:
             temp = temp + 1
             continue
-        else :
-            layer.w      = weights_biases["w"][0]
-            layer.b      = weights_biases["b"][0]
+        else:
+            layer.w = weights_biases["w"][0]
+            layer.b = weights_biases["b"][0]
             next_layer.w = weights_biases["w"][1]
             next_layer.b = weights_biases["b"][1]
     return net
@@ -110,16 +159,32 @@ def load_weights_and_biases(net):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d","--data", help="The path to the MNIST data set in .npz format (generated using utils.py)")
-    parser.add_argument("-f","--func", help="The function name of the example to be run")
-    parser.add_argument("-e","--epoch", help="No of passes over the data", type = int)
-    parser.add_argument("-b","--batch_size", help="Size of each batch", type = int)
-    parser.add_argument("-ks","--kernel_size", help="Size of each batch", type = int)
-    parser.add_argument("-p","--pool_size", help="MaxPooling Layer pool size", type = int)
-    parser.add_argument("-r","--regularization", help="Regularization algo. Possible values L1, L2", type = str)
-    parser.add_argument("-do","--dropout", help="Enable dropout", type = str)
-    parser.add_argument("-dt","--data_type", help="Float type 32 or 64", type = int)
-    parser.add_argument("-re","--retrain", help="Set true to retrain with weights", type = bool)
+    parser.add_argument(
+        "-d",
+        "--data",
+        help=
+        "The path to the MNIST data set in .npz format (generated using utils.py)"
+    )
+    parser.add_argument(
+        "-f", "--func", help="The function name of the example to be run")
+    parser.add_argument(
+        "-e", "--epoch", help="No of passes over the data", type=int)
+    parser.add_argument(
+        "-b", "--batch_size", help="Size of each batch", type=int)
+    parser.add_argument(
+        "-ks", "--kernel_size", help="Size of each batch", type=int)
+    parser.add_argument(
+        "-p", "--pool_size", help="MaxPooling Layer pool size", type=int)
+    parser.add_argument(
+        "-r",
+        "--regularization",
+        help="Regularization algo. Possible values L1, L2",
+        type=str)
+    parser.add_argument("-do", "--dropout", help="Enable dropout", type=str)
+    parser.add_argument(
+        "-dt", "--data_type", help="Float type 32 or 64", type=int)
+    parser.add_argument(
+        "-re", "--retrain", help="Set true to retrain with weights", type=bool)
 
     args = parser.parse_args()
     Logger()
@@ -130,15 +195,23 @@ if __name__ == "__main__":
     u.print("Loading '%s'..." % args.data, bcolor=u.bcolors.BOLD)
     trn_set, tst_set = u.load_mnist_npz(args.data)
 
-    trn_set, vld_set = (trn_set[0][:50000], trn_set[1][:50000]), (trn_set[0][50000:], trn_set[1][50000:])
+    trn_set, vld_set = (trn_set[0][:50000],
+                        trn_set[1][:50000]), (trn_set[0][50000:],
+                                              trn_set[1][50000:])
 
     u.print("Loading '%s'..." % args.func, bcolor=u.bcolors.BOLD)
-    log.debug("args.func-- " + str(args.func) + " args.regularization-- " + str(args.regularization) + " args.epoch-- " + str(args.epoch)
-                 + " args.batch_size-- " + str(args.batch_size) + " args.kernel_size-- " + str(args.kernel_size ) + " args.pool_size-- " + str(args.pool_size))
-    net, optimizer, num_epochs, batch_size = locals()[args.func](args.regularization, args.epoch,args.batch_size, args.kernel_size,args.pool_size)
+    log.debug("args.func-- " + str(args.func) + " args.regularization-- " +
+              str(args.regularization) + " args.epoch-- " + str(args.epoch) +
+              " args.batch_size-- " + str(args.batch_size) +
+              " args.kernel_size-- " + str(args.kernel_size) +
+              " args.pool_size-- " + str(args.pool_size))
+    net, optimizer, num_epochs, batch_size = locals()[args.func](
+        args.regularization, args.epoch, args.batch_size, args.kernel_size,
+        args.pool_size)
     if args.retrain:
         net = load_weights_and_biases(net)
     log.debug(inspect.getsource(locals()[args.func]).strip())
 
     u.print("Training network...", bcolor=u.bcolors.BOLD)
-    train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set, vld_set)
+    train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set,
+                vld_set)

@@ -2,13 +2,13 @@
 from argparse import ArgumentParser
 import sys
 def mult_4x4_approx (multip, multic):
-  
+
   prod = int(multic) * int(multip)
   if prod == 75 or prod == 169:
   	prod = prod - 8
   elif ((multip == 6 and multic == 7) or (multip == 6 and multic == 15) or (multip == 7 and multic == 15)):
     prod = prod - 8
-  
+
   return(prod)
 
 

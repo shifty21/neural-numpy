@@ -7,8 +7,9 @@ import os
 from utils.fixed_point import FixedPoint
 from layers.interface_layer import Layer
 from utils.custom_multiplier import CustomMultiplier
-class FullyConnectedLayer(Layer):
 
+
+class FullyConnectedLayer(Layer):
     def __init__(self, height, init_func, act_func, dropout=False):
         super().__init__()
         self.log = Logger.get_logger(__name__)
@@ -22,7 +23,7 @@ class FullyConnectedLayer(Layer):
         self.dropout = dropout
         self.dropout_rate = 0.9
         self.fixedConverter = FixedPoint()
-        self.customMultiplier = CustomMultiplier()
+        self.customMultiplier = CustomMultiplier(None)
 
     def get_weights(self, convert_to_float):
         if convert_to_float:
@@ -35,7 +36,8 @@ class FullyConnectedLayer(Layer):
         return self.b
 
     def connect_to(self, prev_layer):
-        self.w = self.init_func((self.n_out, prev_layer.n_out), prev_layer.n_out, self.n_out)
+        self.w = self.init_func((self.n_out, prev_layer.n_out),
+                                prev_layer.n_out, self.n_out)
         self.b = f.zero_custom((self.n_out, 1))
         self.vw = f.zeros_like(self.w)
         self.vb = f.zeros_like(self.b)
@@ -47,8 +49,7 @@ class FullyConnectedLayer(Layer):
         self.mtb = f.zeros_like(self.b)
         self.vtb = f.zeros_like(self.b)
 
-    def feedforward(self, prev_layer, inference_custom = False):
-
+    def feedforward(self, prev_layer, inference_custom=False):
         """
         Feedforward the observation through the layer
 
@@ -56,21 +57,23 @@ class FullyConnectedLayer(Layer):
         """
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
         if (self.dropout):
-            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            dropout_matrix = np.random.rand(
+                prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
 
         if inference_custom == True:
             # self.log.debug("type of data %s",type(prev_a[0][0]))
-            wx = self.customMultiplier.matrix_multiplication(self.w,prev_a)
+            wx = self.customMultiplier.matrix_multiplication(self.w, prev_a)
             self.z = wx + self.b
-            # self.log.debug("type of    z %s", type(wx[0][0]))
+            # self.log.debug("typ e of    z %s", type(wx[0][0]))
             # self.z = np.interp(self.z, (self.z.min(),self.z.max()), (0.000000,1.000000))
-            self.z = self.fixedConverter.convert_fixed_to_float(self.z)
-            self.a = self.act_func(self.z)
+            # self.z = self.fixedConverter.convert_fixed_to_float(self.z)
+            # self.a = self.act_func(self.z)
+            self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
             self.a = self.fixedConverter.convert_float_to_fixed(self.a)
             # self.a = self.z
-            # self.log.debug("type of    a %s", type(self.a[0][0]))
+            # self.log.debug("type of    a %s", str(self.a))
         else:
             self.z = self.w @ prev_a + self.b
             self.a = self.act_func(self.z)
@@ -90,13 +93,15 @@ class FullyConnectedLayer(Layer):
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
 
         if (self.dropout):
-            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            dropout_matrix = np.random.rand(
+                prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
         der_w = delta @ prev_a.T
 
         der_b = np.copy(delta)
 
-        prev_delta = (self.w.T @ delta).reshape(prev_layer.z.shape) * prev_layer.der_act_func(prev_layer.z)
+        prev_delta = (self.w.T @ delta).reshape(
+            prev_layer.z.shape) * prev_layer.der_act_func(prev_layer.z)
 
         return der_w, der_b, prev_delta
