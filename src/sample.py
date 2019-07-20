@@ -1,24 +1,20 @@
 import numpy as np
 from timeit import timeit
-from multiprocessing import Pool
+from multiprocessing import Pool, Process, Manager, Value
+import multiprocessing
 
 
-def mmul(matrix):
-    for i in range(100):
-        matrix = matrix * matrix
-    return matrix
+def sigmoid(x):
+    with np.errstate(over="ignore"):
+        dict[x] = (1.0 / 1.0 + np.exp(-x))
+
 
 if __name__ == '__main__':
-    matrices = []
-    for i in range(4):
-        matrices.append(np.random.random_integers(100, size=(1000, 1000)))
 
-    pool = Pool(8)
-    import time
-    millis = int(round(time.time() * 1000))
-    map(mmul, matrices)
-    end = int(round(time.time() * 1000))
-    print (end- millis)
-    pool.map(mmul, matrices)
-    e = int(round(time.time() * 1000))
-    print (e - end)
+    manager = Manager()
+    dict = manager.dict()
+    min = np.iinfo(np.int16).min
+    max = np.iinfo(np.int16).max
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    pool.map(sigmoid, range(min, max))
+    print(type(dict))

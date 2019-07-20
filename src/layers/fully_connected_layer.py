@@ -8,6 +8,8 @@ from utils.fixed_point import FixedPoint
 from layers.interface_layer import Layer
 from utils.custom_multiplier import CustomMultiplier
 
+from ctypes import cdll
+
 
 class FullyConnectedLayer(Layer):
     def __init__(self, height, init_func, act_func, dropout=False):
@@ -23,7 +25,10 @@ class FullyConnectedLayer(Layer):
         self.dropout = dropout
         self.dropout_rate = 0.9
         self.fixedConverter = FixedPoint()
-        self.customMultiplier = CustomMultiplier(None)
+        self.lib = cdll.LoadLibrary(
+            '/home/yakh149a/Downloads/MNIST-cnn-master/src/utils/go_multiplier.so'
+        )
+        # self.log.info("result from lib  %s", str(type(self.lib.try_sample())))
 
     def get_weights(self, convert_to_float):
         if convert_to_float:
@@ -63,14 +68,20 @@ class FullyConnectedLayer(Layer):
             prev_a = prev_a / self.dropout_rate
 
         if inference_custom == True:
-            # self.log.debug("type of data %s",type(prev_a[0][0]))
-            wx = self.customMultiplier.matrix_multiplication(self.w, prev_a)
+            # self.log.debug("type of weight %s biase %s  and prev_a %s",
+            #                str(type(self.w[0][0])), str(type(self.b[0][0])),
+            # str(type(prev_a[0][0])))
+            wx = CustomMultiplier.matrix_multiplication(
+                self.w, prev_a, self.lib)
             self.z = wx + self.b
+
+            # self.z = self.w.astype(np.int16) @ prev_a.astype(np.int16) + self.b
             # self.log.debug("typ e of    z %s", type(wx[0][0]))
             # self.z = np.interp(self.z, (self.z.min(),self.z.max()), (0.000000,1.000000))
             # self.z = self.fixedConverter.convert_fixed_to_float(self.z)
-            # self.a = self.act_func(self.z)
-            self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
+            self.a = self.act_func(self.z)
+            # self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
+            # self.log.info("value of a %s", str(self.a))
             self.a = self.fixedConverter.convert_float_to_fixed(self.a)
             # self.a = self.z
             # self.log.debug("type of    a %s", str(self.a))
