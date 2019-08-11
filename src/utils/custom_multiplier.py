@@ -21,7 +21,6 @@ class CustomMultiplier:
         self.total_overflow = 0
         self.sigmoid_arr = sigmoid_arr
         # self.pool = multiprocessing.Pool(multiprocessing.cpu_count())
-
         self.log.info("Loaded library")
 
     @staticmethod
@@ -46,24 +45,40 @@ class CustomMultiplier:
         print("non overflows " + str(CustomMultiplier.non_overflow))
 
     def get_data_matrix_list(data_matrix):
+        dc = []
         for j in range(len(data_matrix[0])):
-            dc = []
             for k in range(len(data_matrix)):
                 dc.append(data_matrix[k][j])
         return dc
 
     @staticmethod
-    def matrix_multiplication(weight_matrix, data_matrix, lib):
+    def matrix_multiplication(weight_matrix, data_matrix, multiplier):
         result = np.zeros((weight_matrix.shape[0], data_matrix.shape[1]),
-                          dtype=np.int16)
+                          dtype=np.int32)
         # print("type of weight matrix " + str(type(weight_matrix[0][0])) +
         #       " type of data_matrix " + str(type(data_matrix[0][0])))
         dc = CustomMultiplier.get_data_matrix_list(data_matrix)
+        # print(
+        # "type of dc element ",
+        # str(type(dc[0])) + " stride length" + str(np.asarray(dc).strides))
+        # print(weight_matrix[0].ctypes.strides[0])
+        # print(np.asarray(dc).ctypes.strides[0])
         for i in range(len(weight_matrix)):
-            temp_zip = 0
-            for x, y in zip(dc, weight_matrix[i]):
-                temp_zip += CustomMultiplier.mul(x, y)
-            result[i][0] = temp_zip
+            # temp_zip = 0
+            # for x, y in zip(np.asarray(dc), weight_matrix[i]):
+            # temp_zip += CustomMultiplier.mul(x, y)
+
+            c_temp = multiplier(
+                np.asarray(dc).ctypes.data, weight_matrix[i].ctypes.data,
+                len(dc))
+            # if c_temp != temp_zip:
+            #     print("value of python multiplier == " + str(temp_zip) +
+            # " value of c multiplier == " + str(c_temp))
+            # " value of row " + str(repr(weight_matrix[i])) +
+            # " value of col " + str((dc)))
+
+            # result[i][0] = temp_zip
+            result[i][0] = c_temp
         return (result)
 
     @staticmethod
@@ -111,7 +126,7 @@ class CustomMultiplier:
 
     @staticmethod
     def mul(x, y):
-        result = np.int8(0)
+        result = np.int16(0)
         try:
             # result = mult_8x8_approx(x, y, "acc")
             # result = mult_16x16_approx(x, y, "acc")
