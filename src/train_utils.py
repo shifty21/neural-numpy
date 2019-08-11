@@ -87,13 +87,13 @@ class Train:
 
         tst_x, tst_y = tst_set
         tests = [(x, y) for x, y in zip(tst_x, tst_y)]
-        inputs_len = len(tests[:10])
+        inputs_len = len(tests)
 
         inputs_done = 0
         accuracy = 0
         # np.set_printoptions(suppress=True)
         converter = FixedPoint()
-        for x, y in tests[:10]:
+        for x, y in tests:
             inputs_done += 1
             net.feedforward(x, inference_custom)
             u.print(

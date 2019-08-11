@@ -16,11 +16,11 @@ def mult_4x4_acc(multip, multic):
 def mult_8x8_approx(multip, mtc, adder_type):
     log = Logger.get_logger(__name__)
     # Represent multiplier and multiplicand in 8-bits
-    log.info("multiplier %d multiplicand %d ", multip, mtc)
+    # log.info("multiplier %d multiplicand %d ", multip, mtc)
     multip_bin = format(multip, '08b')
     mtc_bin = format(mtc, '08b')
-    log.info("multiplier in binary %s multiplicand in binary %s ",
-             str(multip_bin), str(mtc_bin))
+    # log.info("multiplier in binary %s multiplicand in binary %s ",
+    # str(multip_bin), str(mtc_bin))
 
     #Segment multiplier and multiplicand in 4-bit binary numbers.
     #Convert non-string to string and then integer

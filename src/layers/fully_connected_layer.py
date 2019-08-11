@@ -9,6 +9,19 @@ from layers.interface_layer import Layer
 from utils.custom_multiplier import CustomMultiplier
 
 from ctypes import cdll
+from ctypes import c_int8, c_int
+from numpy.ctypeslib import ndpointer
+from ctypes import *
+
+
+class GoSlice(Structure):
+    _fields_ = [("data", POINTER(c_void_p)), ("len", c_longlong),
+                ("cap", c_longlong)]
+
+
+class GoSlice2d(Structure):
+    _fields_ = [("data", POINTER(GoSlice)), ("len", c_longlong),
+                ("cap", c_longlong)]
 
 
 class FullyConnectedLayer(Layer):
@@ -26,9 +39,13 @@ class FullyConnectedLayer(Layer):
         self.dropout_rate = 0.9
         self.fixedConverter = FixedPoint()
         self.lib = cdll.LoadLibrary(
-            '/home/yakh149a/Downloads/MNIST-cnn-master/src/utils/go_multiplier.so'
-        )
-        # self.log.info("result from lib  %s", str(type(self.lib.try_sample())))
+            '/home/yakh149a/Downloads/MNIST-cnn-master/src/utils/libclib1.so')
+
+    def config_lib(self, w, prev_a):
+        import ctypes
+        self._mul = self.lib.matrix_multiply
+        self._mul.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int]
+        self._mul.restype = ctypes.c_int
 
     def get_weights(self, convert_to_float):
         if convert_to_float:
@@ -71,8 +88,17 @@ class FullyConnectedLayer(Layer):
             # self.log.debug("type of weight %s biase %s  and prev_a %s",
             #                str(type(self.w[0][0])), str(type(self.b[0][0])),
             # str(type(prev_a[0][0])))
+            # self.log.info("shape of w %s and x %s", self.w.shape, prev_a.shape)
+            # wx = CustomMultiplier.matrix_multiplication(
+            #     self.w, prev_a, self.lib)
+            self.config_lib(self.w, prev_a)
+            # self.log.info("weight matrix %s \n data matrix %s", str(self.w),
+            # str(prev_a))
+            # self.lib.Sort(self.w.tolist())
+            # self.log.info("value of sample %s", r.data)
+            # wx = self.lib.multiply_matrix(self.w, prev_a)
             wx = CustomMultiplier.matrix_multiplication(
-                self.w, prev_a, self.lib)
+                self.w, prev_a, self._mul)
             self.z = wx + self.b
 
             # self.z = self.w.astype(np.int16) @ prev_a.astype(np.int16) + self.b
