@@ -106,7 +106,7 @@ class ConvolutionalLayer(Layer):
         new_w = ((image_w - filters_w) // stride) + 1
         range_h = range(0, image_h - filters_h + 1, self.stride_length)
         range_w = range(0, image_w - filters_w + 1, self.stride_length)
-        self.z = np.zeros((filters_c_out, new_h, new_w), dtype=np.int16)
+        self.z = np.zeros((filters_c_out, new_h, new_w))
         for r in range(filters_c_out):
             for t in range(image_c):
                 filter = self.w[r, t]
@@ -136,7 +136,7 @@ class ConvolutionalLayer(Layer):
                             prev_a_window.ravel(), filter_ravel, mode="valid")
                         # self.log.info("c_correl - %s , numpp_correl - %s",
                         #               c_correl, numpy_correl)
-                        self.z[r, i, j] += c_correl
+                        self.z[r, i, j] += numpy_correl
 
         for r in range(self.depth):
             self.z[r] += self.b[r]
