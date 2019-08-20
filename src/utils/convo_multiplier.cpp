@@ -25,11 +25,11 @@ extern "C"
     int temp = 0;
     /* printf("size of char %d",sizeof(arr1));  */
     for(j=0;j<n;j++){
-      char r=0;
+      int r=0;
       char op1= *(arr1+j);
       char op2= *(arr2+j);
       if (op1!=0 && op2!=0){
-        r=op1 * op2;
+        r=(int)op1 * (int)op2;
         result = result + r;
         // printf("counter=%d  x=%d and y=%d => prod=%d ===== result=%d\n",temp,(*(arr1+j)),(*(arr2+j)),r, result);
       }

@@ -88,7 +88,7 @@ def fcl02(regularization, epoch, batch_size, *_):
     return net, optimizer, num_epochs, batch_size
 
 
-def cnn01(regularization, epoch, batch_size, kernel_size, pool_size):
+def cnn01(regularization, epoch, batch_size, kernel_size, pool_size, dropout):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
         ConvolutionalLayer(
@@ -112,7 +112,7 @@ def cnn01(regularization, epoch, batch_size, kernel_size, pool_size):
     return net, optimizer, num_epochs, batch_size
 
 
-def cnn02(regularization, epoch, batch_size, kernel_size, pool_size):
+def cnn02(regularization, epoch, batch_size, kernel_size, pool_size, dropout):
     net = n.NeuralNetwork([
         InputLayer(height=28, width=28),
         ConvolutionalLayer(
@@ -207,7 +207,7 @@ if __name__ == "__main__":
               " args.pool_size-- " + str(args.pool_size))
     net, optimizer, num_epochs, batch_size = locals()[args.func](
         args.regularization, args.epoch, args.batch_size, args.kernel_size,
-        args.pool_size)
+        args.pool_size, args.dropout)
     if args.retrain:
         net = load_weights_and_biases(net)
     log.debug(inspect.getsource(locals()[args.func]).strip())

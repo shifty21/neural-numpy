@@ -9,6 +9,7 @@ from layers.convolutional_layer import ConvolutionalLayer
 
 from utils.fixed_point import FixedPoint
 
+
 class MaxPoolingLayer(Layer):
     def __init__(self, pool_size, dropout=False):
         super().__init__()
@@ -19,7 +20,6 @@ class MaxPoolingLayer(Layer):
         self.dropout = dropout
         self.dropout_rate = 0.9
         self.fixedConverter = FixedPoint()
-
 
     def get_weights(self, convert_to_float):
         if convert_to_float:
@@ -34,8 +34,10 @@ class MaxPoolingLayer(Layer):
     def connect_to(self, prev_layer):
         assert isinstance(prev_layer, ConvolutionalLayer)
         self.depth = prev_layer.depth
-        self.height = ((prev_layer.height - self.pool_size) // self.pool_size) + 1
-        self.width  = ((prev_layer.width  - self.pool_size) // self.pool_size) + 1
+        self.height = (
+            (prev_layer.height - self.pool_size) // self.pool_size) + 1
+        self.width = (
+            (prev_layer.width - self.pool_size) // self.pool_size) + 1
         self.n_out = self.depth * self.height * self.width
 
         self.w = np.empty((0))
@@ -50,9 +52,7 @@ class MaxPoolingLayer(Layer):
         self.mtb = f.zeros_like(self.b)
         self.vtb = f.zeros_like(self.b)
 
-
-
-    def feedforward(self, prev_layer):
+    def feedforward(self, prev_layer, inference):
         """
         Feedforward the observation through the layer
 
@@ -67,7 +67,8 @@ class MaxPoolingLayer(Layer):
 
         prev_a = prev_layer.a
         if (self.dropout):
-            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            dropout_matrix = np.random.rand(
+                prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
 
@@ -78,9 +79,12 @@ class MaxPoolingLayer(Layer):
         for r, t in zip(range(self.depth), range(prev_layer.depth)):
             assert r == t
             for i, m in enumerate(range(0, prev_layer.height, self.pool_size)):
-                for j, n in enumerate(range(0, prev_layer.width, self.pool_size)):
-                    prev_a_window = prev_a[t, m:m+self.pool_size, n:n+self.pool_size]
-                    assert prev_a_window.shape == (self.pool_size, self.pool_size)
+                for j, n in enumerate(
+                        range(0, prev_layer.width, self.pool_size)):
+                    prev_a_window = prev_a[t, m:m + self.pool_size, n:n +
+                                           self.pool_size]
+                    assert prev_a_window.shape == (self.pool_size,
+                                                   self.pool_size)
                     # downsampling
                     self.z[r, i, j] = np.max(prev_a_window)
 
@@ -105,7 +109,8 @@ class MaxPoolingLayer(Layer):
         prev_a = prev_layer.a
 
         if (self.dropout):
-            dropout_matrix = np.random.rand(prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
+            dropout_matrix = np.random.rand(
+                prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
 
@@ -117,14 +122,19 @@ class MaxPoolingLayer(Layer):
         for r, t in zip(range(self.depth), range(prev_layer.depth)):
             assert r == t
             for i, m in enumerate(range(0, prev_layer.height, self.pool_size)):
-                for j, n in enumerate(range(0, prev_layer.width, self.pool_size)):
-                    prev_a_window = prev_a[t, m:m+self.pool_size, n:n+self.pool_size]
-                    assert prev_a_window.shape == (self.pool_size, self.pool_size)
+                for j, n in enumerate(
+                        range(0, prev_layer.width, self.pool_size)):
+                    prev_a_window = prev_a[t, m:m + self.pool_size, n:n +
+                                           self.pool_size]
+                    assert prev_a_window.shape == (self.pool_size,
+                                                   self.pool_size)
                     # upsampling: the unit which was the max at the forward propagation
                     # receives all the error at backward propagation (the other units receive zero)
-                    max_unit_index = np.unravel_index(prev_a_window.argmax(), prev_a_window.shape)
+                    max_unit_index = np.unravel_index(prev_a_window.argmax(),
+                                                      prev_a_window.shape)
                     prev_delta_window = f.zeros_like(prev_a_window)
                     prev_delta_window[max_unit_index] = delta[t, i, j]
-                    prev_delta[r, m:m+self.pool_size, n:n+self.pool_size] = prev_delta_window
+                    prev_delta[r, m:m + self.pool_size, n:n +
+                               self.pool_size] = prev_delta_window
 
         return der_w, der_b, prev_delta

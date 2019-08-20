@@ -49,14 +49,13 @@ class CustomMultiplier:
         for j in range(len(data_matrix[0])):
             for k in range(len(data_matrix)):
                 dc.append(data_matrix[k][j])
+        # print(dc)
         return dc
 
     @staticmethod
     def matrix_multiplication(weight_matrix, data_matrix, multiplier):
         result = np.zeros((weight_matrix.shape[0], data_matrix.shape[1]),
-                          dtype=np.int32)
-        # print("type of weight matrix " + str(type(weight_matrix[0][0])) +
-        #       " type of data_matrix " + str(type(data_matrix[0][0])))
+                          dtype=np.int16)
         dc = CustomMultiplier.get_data_matrix_list(data_matrix)
         # print(
         # "type of dc element ",
@@ -73,11 +72,10 @@ class CustomMultiplier:
                 len(dc))
             # if c_temp != temp_zip:
             #     print("value of python multiplier == " + str(temp_zip) +
-            # " value of c multiplier == " + str(c_temp))
-            # " value of row " + str(repr(weight_matrix[i])) +
-            # " value of col " + str((dc)))
+            #           " value of c multiplier == " + str(c_temp) +
+            #           # " value of row " + str(repr(weight_matrix[i])) +
+            #           " value of col " + str((dc)))
 
-            # result[i][0] = temp_zip
             result[i][0] = c_temp
         return (result)
 
