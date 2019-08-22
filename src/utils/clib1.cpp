@@ -25,7 +25,7 @@ extern "C"
     int temp = 0;
     /* printf("size of char %d",sizeof(arr1));  */
     for(j=0;j<n;j++){
-      char r=0;
+      int r=0;
       char op1= *(arr1+j);
       char op2= *(arr2+j);
       if (op1!=0 && op2!=0){
