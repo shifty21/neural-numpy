@@ -43,19 +43,5 @@ extern "C"
 }
 int main()
 {
-  // char arr[] = {12, 102, 3};
-  // int n = 3;
-  // We can also use "print(&arr[0][0], m, n);"
-  /* foobar((int *)arr, n); */
-
-  // printf("size of long %ld \n", sizeof(char));
-  // printf("size of long %ld \n", sizeof(short));
-  // printf("size of long %ld \n", sizeof(int));
-  // printf("size of long %ld \n", sizeof(long));
-  // printf("char min_int=%d, max_int=%d \n",SCHAR_MIN,SCHAR_MAX);
-  // printf("short min_int=%d, max_int=%d \n",SHRT_MIN,SHRT_MAX);
-  // printf("int min_int=%d, max_int=%d \n",INT_MIN,INT_MAX);
-  // printf("long min_int=%ld, max_int=%ld \n",LONG_MIN,LONG_MAX);
-  // foobar(arr,n);
    return 0;
 }

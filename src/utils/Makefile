@@ -1,3 +1,5 @@
+reubild: clean all
+
 all: convo_multiplier.so
 
 clean:
