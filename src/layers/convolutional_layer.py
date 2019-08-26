@@ -27,7 +27,9 @@ class ConvolutionalLayer(Layer):
         self.dropout_rate = 0.9
         self.fixedConverter = FixedPoint()
         self.lib = cdll.LoadLibrary(
-            '/home/yakh149a/Downloads/MNIST-cnn-master/src/utils/libclib1.so')
+            '/home/yakh149a/Downloads/MNIST-cnn-master/src/cpp_multiplier/behavioral.so'
+        )
+        # '/home/yakh149a/Downloads/MNIST-cnn-master/src/utils/libclib1.so')
 
     def get_weights(self, convert_to_float):
         if convert_to_float:
@@ -117,10 +119,11 @@ class ConvolutionalLayer(Layer):
                         prev_a_window = prev_a[t, m:m + filters_h, n:n +
                                                filters_w]
                         c_correl = 0
+                        numpy_correl = 0
                         if inference == True:
                             # self.log.info("type of weight - %s",
                             #               type(self.z[0][0][0]))
-                            c_correl += self._mul(
+                            c_correl = self._mul(
                                 prev_a_window.ravel().ctypes.data,
                                 ctypes_filter_ravel, len(filter_ravel))
                         else:
@@ -128,14 +131,12 @@ class ConvolutionalLayer(Layer):
                                 prev_a_window.ravel(),
                                 filter_ravel,
                                 mode="valid")
-                        # self.log.info(
-                        #     "type of prev_a - %s , type of filter_ravel - %s",
-                        #     type(prev_a_window.ravel()[0]),
-                        #     type(filter_ravel[0]))
                         numpy_correl = np.correlate(
                             prev_a_window.ravel(), filter_ravel, mode="valid")
-                        # self.log.info("c_correl - %s , numpp_correl - %s",
-                        #               c_correl, numpy_correl)
+                        # self.log.info(
+                        #     "c_correl -> %s type -> %s, numpp_correl -> %s type -> %s",
+                        #     c_correl, type(c_correl), numpy_correl,
+                        #     type(numpy_correl))
                         self.z[r, i, j] += numpy_correl
 
         for r in range(self.depth):

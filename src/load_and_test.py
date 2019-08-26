@@ -110,6 +110,8 @@ if __name__ == "__main__":
         "-f", "--func", help="the function name of the test to be run")
     parser.add_argument(
         "-c", "--convert", help="convert the weight and biases", type=int)
+    parser.add_argument("-sd", "--saved_data", help="Saved data")
+
     args = parser.parse_args()
 
     if args.convert == 1:
@@ -117,7 +119,7 @@ if __name__ == "__main__":
     else:
         convert_to_fixed = False
     trn_set, tst_set = u.load_mnist_npz(args.data)
-    weights_biases = np.load("np_weights.npz")
+    weights_biases = np.load(args.saved_data)
     log.debug("shape of weight %s", str(len(weights_biases["w"])))
     log.debug("shape of biases %s", str(len(weights_biases["w"])))
     net = locals()[args.func](weights_biases, convert_to_fixed, log)

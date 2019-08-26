@@ -13,6 +13,13 @@ _mul = _dll.matrix_multiply
 _mul.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int]
 _mul.restype = ctypes.c_int
 
+_accurate_dll = ctypes.CDLL(
+    '/home/yakh149a/Downloads/MNIST-cnn-master/src/cpp_multiplier/behavioral.so'
+)
+_custom_mul = _accurate_dll.matrix_multiply
+_custom_mul.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_void_p]
+_custom_mul.restype = ctypes.c_int
+
 # _print = _dll.foobar
 # _print.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int]
 # _print.restype = None
@@ -36,10 +43,18 @@ def mul(x, y):
     return result
 
 
+def custom_multiplier(x, y, l):
+    return _custom_mul(x, y, l)
+
+
 if __name__ == '__main__':
-    x = np.array([1, 20, 3], dtype=np.int8)
-    y = np.array([1, 1, 1], dtype=np.int8)
-    foobar(x, y)
+    x = np.array([-7, 13, 2], dtype=np.int8)
+    y = np.array([13, -10, -13], dtype=np.int8)
+    # foobar(x, y)
+    result = custom_multiplier(x.ravel().ctypes.data,
+                               y.ravel().ctypes.data, len(y))
+    print("python result  - " + str(result))
+    print("numpy --- " + str(np.correlate(x.ravel(), y.ravel(), mode="valid")))
     # temp_zip = 0
     # x = np.array([
     #     0, -5, -6, 2, 0, 0, 2, -7, 0, -2, 5, 0, 0, -1, -1, 3, 2, 0, -6, 4, -4,

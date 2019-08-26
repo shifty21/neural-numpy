@@ -1,10 +1,10 @@
-all: clib1.so
+all: convo_multiplier.so
 
 clean:
 	rm -f *.o *.so *.html
 
-clib1.so: clib1.o
-	g++ -shared -g -o libclib1.so clib1.o
+convo_multiplier.so: convo_multiplier.o
+	g++ -shared -g -o libclib1.so convo_multiplier.o
 
-clib1.o: clib1.cpp
-	g++ -Wall -fpic -g -c clib1.cpp
+convo_multiplier.o: convo_multiplier.cpp
+	g++ -Wall -fpic -g -c convo_multiplier.cpp

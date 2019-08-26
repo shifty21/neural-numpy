@@ -5,5 +5,8 @@ log/
 *.pyprof.log
 src/*.pyprof
 src/*.pyprof.log
-np_weights.npz
-weights.npz
+src/*npz
+src/utils/*.o
+src/utils/*.so
+src/cpp_multiplier/*.o
+src/cpp_multiplier/*.so

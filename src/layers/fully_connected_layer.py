@@ -39,7 +39,8 @@ class FullyConnectedLayer(Layer):
         self.dropout_rate = 0.9
         self.fixedConverter = FixedPoint()
         self.lib = cdll.LoadLibrary(
-            '/home/yakh149a/Downloads/MNIST-cnn-master/src/utils/libclib1.so')
+            '/home/yakh149a/Downloads/MNIST-cnn-master/src/cpp_multiplier/behavioral.so'
+        )
 
     def config_lib(self, w, prev_a):
         import ctypes

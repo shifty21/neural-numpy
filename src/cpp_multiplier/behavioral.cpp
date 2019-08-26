@@ -1,14 +1,15 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
-#include "math.h"
+#include <math.h>
 #include <cmath>
 #include <fstream>
 #include "behavioral.hpp"
+#include <cstdio>
 //#include <cstdint>
 using namespace std;
 
-int main(int argc, char **argv) {
+long long int custom_multiplier(int arr1, int arr2) {
   //***insert size of multiplier here***
   int N = 8; //width
   int M = 8; //heigth
@@ -30,35 +31,9 @@ int main(int argc, char **argv) {
   bool row[(M/2)+2][M+N];
   bool tmp[1][M+N];
 
-  if (argc != 3){
-    std::cout << "Wrong number of inputs" << endl;
-    return -1;
-  }
-
-  saveaa = atoi(argv[1]);
-  savebb = atoi(argv[2]);
-
-  //uncomment this for console input from here -->
-  //std::cout << "Input a: " << endl;
-  //std::cin >> saveaa;
-  //std::cout << "Input b: " << endl;
-  //std::cin >> savebb;
-  //<-- till here
-
-  //uncomment this for reading from 2 .txt files and write into a .csv from here -->
-  //std::ofstream ofile;
-  //ofile.open("mul_results.csv", ios::out | ios::trunc);
-
-  //ofile << "a,b,bin_a,bin_b,accu,appr,bin_accu,bin_appr,row0,row1,row2,row3,error,rel_err" << endl;
-
-  //ofile.close();
-
-  //std::ifstream infilea("tb_in_a0.txt");
-  //while (infilea >> saveaa){
-  //std::ifstream infileb("tb_in_b0.txt");
-  //while (infileb >> savebb){
-  //<-- till here
-
+  saveaa = (arr1);
+  savebb = (arr2);
+  // printf("saveaa -> %d, savebb -> %d\n",saveaa,savebb);
   //convert int to binary array
 
   aa = saveaa;
@@ -227,36 +202,6 @@ for (int i = 0; i < M/2; i++) {
 }
 
 //------------------------------------------------------------------------------
-//10x24-Bit for video gray scale mul
-//------------------------------------------------------------------------------
-
-//for (int i = 0; i < N+M; i++) {
-//  if (i == 0) {
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 0, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5_mix_rev(), Lut1[i].getCompO6_mix());
-//    row[5][i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i != 0 ){//and i != 11 and i != 12 and i != 13) {
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 0, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5_mix(), Lut1[i].getCompO6_mix());
-//    row[5][i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(row[5][i], row[4][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, row[5][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut2[i].setLutInput(row[5][i], row[4][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), row[5][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
 //8-Bit
 //------------------------------------------------------------------------------
 
@@ -286,280 +231,6 @@ for (int i = 2; i < N+M; i++) {
   }
 }
 
-//------------------------------------------------------------------------------
-//16-Bit
-//------------------------------------------------------------------------------
-
-//for (int i = 0; i < N+M; i++) {
-//  if (i == 0) {
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 0, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5_carry(), Lut1[i].getCompO6_carry());
-//    row[8][i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i != 0 ){
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 0, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5_carry(), Lut1[i].getCompO6_carry());
-//    row[8][i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++) {
-//  if (i == 0) {
-//    Lut1[i].setLutInput(row[7][i], row[6][i], row[5][i], row[4][i], 0, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5_carry(), Lut1[i].getCompO6_carry());
-//    row[9][i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i != 0 ){
-//    Lut1[i].setLutInput(row[7][i], row[6][i], row[5][i], row[4][i], 0, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5_carry(), Lut1[i].getCompO6_carry());
-//    row[9][i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(row[8][i], row[9][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, row[9][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut2[i].setLutInput(row[8][i], row[9][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), row[9][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
-//10-Bit
-//------------------------------------------------------------------------------
-//10-Bit_1
-
-//tmp[1][0] = pp[0][0];
-//tmp[1][1] = pp[0][1];
-
-//for (int i = 2; i < N+M; i++){
-//  if (i == 2) {
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[1][i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i > 2) {
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[1][i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(tmp[1][i], row[4][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, tmp[1][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut2[i].setLutInput(tmp[1][i], row[4][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), tmp[1][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
-//10-Bit_2
-
-//tmp[1][0] = pp[1][0];
-//tmp[1][1] = pp[1][1];
-
-//for (int i = 2; i < N+M; i++){
-//  if (i == 2) {
-//    Lut1[i].setLutInput(row[4][i], row[3][i], row[2][i], row[1][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[1][i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i > 2) {
-//    Lut1[i].setLutInput(row[4][i], row[3][i], row[2][i], row[1][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[1][i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(row[0][i], tmp[1][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, tmp[1][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut2[i].setLutInput(row[0][i], tmp[1][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), tmp[1][i], Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
-//10-Bit_3
-
-//tmp[1][0] = pp[0][0];
-//tmp[1][1] = pp[0][1];
-
-//for (int i = 2; i < N+M; i++) {
-//  if ( i == 2) {
-//    Lut2[i].setLutInput(row[0][i], row[1][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, row[0][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 2) {
-//    Lut2[i].setLutInput(row[0][i], row[1][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), row[0][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++){
-//  if (i == 0) {
-//    Lut1[i].setLutInput(row[4][i], row[3][i], row[2][i], tmp[1][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut1[i].setLutInput(row[4][i], row[3][i], row[2][i], tmp[1][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
-//10-Bit_4
-
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(row[3][i], row[4][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, tmp[1][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut2[i].setLutInput(row[3][i], row[4][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), tmp[1][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++){
-//  if (i == 0) {
-//    Lut1[i].setLutInput(tmp[1][i], row[2][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut1[i].setLutInput(tmp[1][i], row[2][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
-//10-Bit_5
-
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(row[1][i], row[2][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, tmp[1][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut2[i].setLutInput(row[1][i], row[2][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), tmp[1][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++){
-//  if (i == 0) {
-//    Lut1[i].setLutInput(row[4][i], row[3][i], tmp[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut1[i].setLutInput(row[4][i], row[3][i], tmp[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
-//10-Bit_6
-
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(row[2][i], row[3][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, tmp[1][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//   Lut2[i].setLutInput(row[2][i], row[3][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), tmp[1][i], Lut2[i].getRcaO6());
-//    tmp[1][i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
-//for (int i = 0; i < N+M; i++){
-//  if (i == 0) {
-//    Lut1[i].setLutInput(row[4][i], tmp[1][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i > 0) {
-//    Lut1[i].setLutInput(row[4][i], tmp[1][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    p[i] = Carry1[i].getCarryXOut();
-//  }
-//}
-
-//------------------------------------------------------------------------------
-//16-Bit
-//------------------------------------------------------------------------------
-
-//tmp[0][0] = pp[0][0];
-//tmp[0][1] = pp[0][1];
-
-//for (int i = 2; i < N+M; i++){
-//  if (i == 2) {
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[0][i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i != 2) {
-//    Lut1[i].setLutInput(row[3][i], row[2][i], row[1][i], row[0][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[0][i] = Carry1[i].getCarryXOut();
-//  }
-//}
-//
-//for (int i = 0; i < N+M; i++){
-//  if (i == 0) {
-//    Lut1[i].setLutInput(row[7][i], row[6][i], row[5][i], row[4][i], 1, 0);
-//    Carry1[i].setCarryInput(0, Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[1][i] = Carry1[i].getCarryXOut();
-//  }
-//  if (i != 0) {
-//    Lut1[i].setLutInput(row[7][i], row[6][i], row[5][i], row[4][i], 1, 0);
-//    Carry1[i].setCarryInput(Carry1[i-1].getCarryCOut(), Lut1[i].getCompO5(), Lut1[i].getCompO6());
-//    tmp[1][i] = Carry1[i].getCarryXOut();
-//  }
-//}
-//
-//for (int i = 0; i < N+M; i++) {
-//  if ( i == 0) {
-//    Lut2[i].setLutInput(tmp[0][i], tmp[1][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(0, 0, Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//  if (i != 0) {
-//    Lut2[i].setLutInput(tmp[0][i], tmp[1][i], 0, 0, 0, 0);
-//    Carry2[i].setCarryInput(Carry2[i-1].getCarryCOut(), 0, Lut2[i].getRcaO6());
-//    p[i] = Carry2[i].getCarryXOut();
-//  }
-//}
-
 ppp = 0;
 for (int i = 0; i < N+M; i++){
   ppp += p[i]*(pow(2,i));
@@ -575,57 +246,57 @@ if (p[N+M-1]){
 
 //regular console output, uncomment from here -->
 //std::cout << "Result: ";
-std::cout << ppp << endl;
+// std::cout << ppp << endl;
 //<-- till here
+// printf("result-> %d \n",ppp);
+ return ppp;
+}
 
-//give .csv conform output, uncomment from here -->
+extern "C"
+{
+  int8_t matrix_multiply(char *arr1, char *arr2, int n){
+    int j;
+    int8_t result=0;
+    int temp = 0;
+    /* printf("size of char %d",sizeof(arr1));  */
+    for(j=0;j<n;j++){
+      int8_t r=0;
+      int op1= (int)(*(arr1+j));
+      int op2= (int)(*(arr2+j));
+      if (op1!=0 && op2!=0){
+        if (op2 < 0 && op1 >0){
+            r= custom_multiplier(op2,op1);
+        } else if (op2 <0 && op1 <0) {
+          if (abs(op2)> abs(op1)) {
+            r = custom_multiplier(op2,op1);
+          } else {
+            r = custom_multiplier(op1,op2);
+          }
+        }
+        else {
+          r = custom_multiplier(op1,op2);
+        }
+         result = result + r;
+        // printf("counter=%d  op1=%d and op2=%d => prod=%d ===== result=%d\n",temp, op1,op2,r, result);
+      }
+      temp++;
 
-//ofile.open("mul_results.csv", ios::out | ios::app);
+    }
+    /* printf("result=%d",result); */
+    return result;
+  }
 
-//ofile << saveaa << "," << savebb << ",";
-//for (int i = N-1; i >= 0; i--){
-//  ofile << a[i];
-//}
-//ofile << ",";
-//for (int i = M-1; i >= 0; i--){
-//  ofile << b[i];
-//}
-//ofile << ",";
-//ofile << saveacc << "," << ppp << ",";
-//for (int i = N+M-1; i >= 0; i--){
-//  ofile << acc_p[i];
-//}
-//ofile << ",";
-//for (int i = N+M-1; i >= 0; i--){
-//  ofile << p[i];
-//}
+}
+int main(int argc, char **argv) {
 
-//>>>
-//ofile << ",";
-//for (int j = 0; j < M/2; j++) {
-//  ofile << ",";
-//  for (int i = N+M-1; i >= 0; i--){
-//    ofile << row[j][i];
-//  }
-//}
-//ofile << ",";
-//for (int i = N+M-1; i >= 0; i--){
-//  ofile << row[1][i];
-//}
-//ofile << ",";
-//for (int i = N+M-1; i >= 0; i--){
-//  ofile << row[2][i];
-//}
-//ofile << ",";
-//for (int i = N+M-1; i >= 0; i--){
-//  ofile << row[3][i];
-//}
-///<<<
+  if (argc != 3){
+    std::cout << "Wrong number of inputs" << endl;
+    return -1;
+  }
 
-//ofile << endl;
-//ofile.close();
-//}
-//}
-//<-- till here (sorry for the bracket layout of the output :D)
-return 0;
+  int saveaa = atoi(argv[1]);
+  int savebb = atoi(argv[2]);
+  printf ("saveaa -- %d, savebb -- %d",saveaa, savebb);
+  // custom_multiplier(saveaa,savebb);
+  return 0;
 }
