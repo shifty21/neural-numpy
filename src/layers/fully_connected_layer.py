@@ -14,16 +14,6 @@ from numpy.ctypeslib import ndpointer
 from ctypes import *
 
 
-class GoSlice(Structure):
-    _fields_ = [("data", POINTER(c_void_p)), ("len", c_longlong),
-                ("cap", c_longlong)]
-
-
-class GoSlice2d(Structure):
-    _fields_ = [("data", POINTER(GoSlice)), ("len", c_longlong),
-                ("cap", c_longlong)]
-
-
 class FullyConnectedLayer(Layer):
     def __init__(self, height, init_func, act_func, dropout=False):
         super().__init__()
@@ -41,10 +31,15 @@ class FullyConnectedLayer(Layer):
         self.lib = cdll.LoadLibrary(
             '/home/yakh149a/Downloads/MNIST-cnn-master/src/cpp_multiplier/behavioral.so'
         )
+        self.customMultiplier = CustomMultiplier(None)
 
     def config_lib(self, w, prev_a):
         import ctypes
         self._mul = self.lib.matrix_multiply
+        # self._mul.argtypes = [
+        #     ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int, ctypes.c_int,
+        #     ctypes.c_int
+        # ]
         self._mul.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int]
         self._mul.restype = ctypes.c_int
 
@@ -78,42 +73,29 @@ class FullyConnectedLayer(Layer):
 
         :param prev_layer: the previous layer of the network
         """
+
         prev_a = prev_layer.a.reshape((prev_layer.a.size, 1))
+
         if (self.dropout):
             dropout_matrix = np.random.rand(
                 prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
-
+        # self.log.debug("type of prev_a " + str(type(prev_a.ravel()[0])))
         if inference_custom == True:
-            # self.log.debug("type of weight %s biase %s  and prev_a %s",
-            #                str(type(self.w[0][0])), str(type(self.b[0][0])),
-            # str(type(prev_a[0][0])))
-            # self.log.info("shape of w %s and x %s", self.w.shape, prev_a.shape)
-            # wx = CustomMultiplier.matrix_multiplication(
-            #     self.w, prev_a, self.lib)
             self.config_lib(self.w, prev_a)
-            # self.log.info("weight matrix %s \n data matrix %s", str(self.w),
-            # str(prev_a))
-            # self.lib.Sort(self.w.tolist())
-            # self.log.info("value of sample %s", r.data)
-            # wx = self.lib.multiply_matrix(self.w, prev_a)
             wx = CustomMultiplier.matrix_multiplication(
-                self.w, prev_a, self._mul)
+                self.w, prev_a, self._mul, self.log)
             self.z = wx + self.b
 
-            # self.z = self.w.astype(np.int16) @ prev_a.astype(np.int16) + self.b
-            # self.log.debug("typ e of    z %s", type(wx[0][0]))
-            # self.z = np.interp(self.z, (self.z.min(),self.z.max()), (0.000000,1.000000))
-            # self.z = self.fixedConverter.convert_fixed_to_float(self.z)
             self.a = self.act_func(self.z)
             # self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
-            # self.log.info("value of a %s", str(self.a))
             self.a = self.fixedConverter.convert_float_to_fixed(self.a)
             # self.a = self.z
             # self.log.debug("type of    a %s", str(self.a))
         else:
             self.z = self.w @ prev_a + self.b
+            # self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
             self.a = self.act_func(self.z)
         assert self.z.shape == self.a.shape
 

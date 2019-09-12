@@ -74,8 +74,11 @@ class MaxPoolingLayer(Layer):
 
         prev_layer_fmap_size = prev_layer.height
         assert prev_layer_fmap_size % self.pool_size == 0
-
-        self.z = np.zeros((self.depth, self.height, self.width))
+        if inference:
+            self.z = np.zeros((self.depth, self.height, self.width),
+                              dtype=np.int8)
+        else:
+            self.z = np.zeros((self.depth, self.height, self.width))
         for r, t in zip(range(self.depth), range(prev_layer.depth)):
             assert r == t
             for i, m in enumerate(range(0, prev_layer.height, self.pool_size)):

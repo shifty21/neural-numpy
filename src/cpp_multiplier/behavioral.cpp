@@ -243,60 +243,53 @@ if (p[N+M-1]){
   ppp = ~ppp & tmp;
   ppp = (ppp + 1) * -1;
 }
-
-//regular console output, uncomment from here -->
-//std::cout << "Result: ";
-// std::cout << ppp << endl;
-//<-- till here
-// printf("result-> %d \n",ppp);
  return ppp;
 }
 
 extern "C"
 {
-  int8_t matrix_multiply(char *arr1, char *arr2, int n){
-    int j;
-    int8_t result=0;
+  // int8_t matrix_multiply(char *arr1, char *arr2, int n, int stride_arr1, int stride_arr2){
+
+  int16_t matrix_multiply(char *arr1, char *arr2, int n){
+  int j;
+    short result=0;
     int temp = 0;
-    /* printf("size of char %d",sizeof(arr1));  */
+    // printf("stride length of arr1=%d and stride length of arr2=%d\n",stride_arr1, stride_arr2);
     for(j=0;j<n;j++){
-      int8_t r=0;
-      int op1= (int)(*(arr1+j));
-      int op2= (int)(*(arr2+j));
+      short r=0;
+      short op1= (short)(*(arr1+j));
+      short op2= (short)(*(arr2+j));
       if (op1!=0 && op2!=0){
-        if (op2 < 0 && op1 >0){
-            r= custom_multiplier(op2,op1);
-        } else if (op2 <0 && op1 <0) {
-          if (abs(op2)> abs(op1)) {
-            r = custom_multiplier(op2,op1);
-          } else {
-            r = custom_multiplier(op1,op2);
-          }
-        }
-        else {
-          r = custom_multiplier(op1,op2);
-        }
+        // if (op2 < 0 && op1 >0){
+        //     r= custom_multiplier(op2,op1);
+        // } else if (op2 <0 && op1 <0) {
+        //   if (abs(op2)> abs(op1)) {
+        //     r = custom_multiplier(op2,op1);
+        //   } else {
+        //     r = custom_multiplier(op1,op2);
+        //   }
+        // }
+        // else {
+        //   r = custom_multiplier(op1,op2);
+        // }
+        r = op1*op2;
+        r = r>>2;
+        // if (r < -128){
+        //   r = -128;
+        //     } else if (r > 127) {
+        //   r = 127;
+        // }
          result = result + r;
         // printf("counter=%d  op1=%d and op2=%d => prod=%d ===== result=%d\n",temp, op1,op2,r, result);
       }
       temp++;
 
     }
-    /* printf("result=%d",result); */
+    // printf("result=%d\n",result);
     return result;
   }
 
 }
 int main(int argc, char **argv) {
-
-  if (argc != 3){
-    std::cout << "Wrong number of inputs" << endl;
-    return -1;
-  }
-
-  int saveaa = atoi(argv[1]);
-  int savebb = atoi(argv[2]);
-  printf ("saveaa -- %d, savebb -- %d",saveaa, savebb);
-  // custom_multiplier(saveaa,savebb);
   return 0;
 }

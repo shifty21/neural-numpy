@@ -40,8 +40,8 @@ class NeuralNetwork():
             # self.log.debug("max value of input -- %f  and min value of input -- %f", x.max(),x.min())
             self.input_layer.z = x
             self.input_layer.a = x
-            self.input_layer.z /= np.abs(self.input_layer.z.max())
-            self.input_layer.a /= np.abs(self.input_layer.a.max())
+            # self.input_layer.z /= np.abs(self.input_layer.z.max())
+            # self.input_layer.a /= np.abs(self.input_layer.a.max())
             self.input_layer.z = self.fixedConverter.convert_float_to_fixed(x)
             self.input_layer.a = self.fixedConverter.convert_float_to_fixed(x)
         else:
