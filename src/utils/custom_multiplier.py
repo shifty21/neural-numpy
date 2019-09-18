@@ -101,6 +101,11 @@ class CustomMultiplier:
 
     def sigmoid_activation_lut_conv(self, arr):
         result = np.zeros((arr.shape), dtype=np.float64)
+        for d in range(arr.shape[0]):
+            for h in range(arr.shape[1]):
+                for w in range(arr.shape[2]):
+                    result[d][h][w] = self.sigmoid_arr[arr[d][h][w]]
+        return result
 
     def lookup_lut(list_row):
         pass

@@ -114,7 +114,7 @@ class ConvolutionalLayer(Layer):
         range_h = range(0, image_h - filters_h + 1, self.stride_length)
         range_w = range(0, image_w - filters_w + 1, self.stride_length)
         if inference == True:
-            self.z = np.zeros((filters_c_out, new_h, new_w), dtype=np.int16)
+            self.z = np.zeros((filters_c_out, new_h, new_w), dtype=np.int8)
         else:
             self.z = np.zeros((filters_c_out, new_h, new_w))
         for r in range(filters_c_out):
@@ -165,8 +165,11 @@ class ConvolutionalLayer(Layer):
 
         for r in range(self.depth):
             self.z[r] += self.b[r]
-        # self.a = self.customMultiplier.sigmoid_activation_lut_conv(self.z)
-        self.a = np.vectorize(self.act_func)(self.z)
+
+        if inference == True:
+            self.a = self.customMultiplier.sigmoid_activation_lut_conv(self.z)
+        else:
+            self.a = np.vectorize(self.act_func)(self.z)
 
         self.a = self.fixedConverter.convert_float_to_fixed(self.a)
         self.log.debug("type of convolution layer array %s",

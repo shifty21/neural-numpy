@@ -250,7 +250,7 @@ extern "C"
 {
   // int8_t matrix_multiply(char *arr1, char *arr2, int n, int stride_arr1, int stride_arr2){
 
-  int16_t matrix_multiply(char *arr1, char *arr2, int n){
+  int8_t matrix_multiply(char *arr1, char *arr2, int n){
   int j;
     short result=0;
     int temp = 0;
@@ -259,28 +259,29 @@ extern "C"
       short r=0;
       short op1= (short)(*(arr1+j));
       short op2= (short)(*(arr2+j));
+      bool sign = false;
+      if (op1 <0 && op2 <0){
+        sign = false;
+      } else if (op2 < 0){
+        sign = true;
+      } else if (op1 < 0){
+        sign = true;
+        }
       if (op1!=0 && op2!=0){
-        // if (op2 < 0 && op1 >0){
-        //     r= custom_multiplier(op2,op1);
-        // } else if (op2 <0 && op1 <0) {
-        //   if (abs(op2)> abs(op1)) {
-        //     r = custom_multiplier(op2,op1);
-        //   } else {
-        //     r = custom_multiplier(op1,op2);
-        //   }
-        // }
-        // else {
-        //   r = custom_multiplier(op1,op2);
-        // }
-        r = op1*op2;
-        r = r>>2;
-        // if (r < -128){
-        //   r = -128;
-        //     } else if (r > 127) {
-        //   r = 127;
-        // }
-         result = result + r;
-        // printf("counter=%d  op1=%d and op2=%d => prod=%d ===== result=%d\n",temp, op1,op2,r, result);
+        //pass absolute values and take 2s complement based on sign. This is specific to this multiplier only
+        int8_t t=0;
+        r = custom_multiplier(abs(op1),abs(op2));
+        // r = mul8s_1KR8(abs(op1),abs(op2));
+        // printf("r=%d and size of t = %d\n",r,sizeof(t));
+        r = r >> 4;
+        // printf("r after 4 right shift=%d",r);
+        if (sign==true){
+          t = (~r+1);
+        } else {
+          t = r;
+        }
+        result = result + t;
+        // printf("counter=%d  op1=%d and op2=%d => prod=%zu ===== result=%d\n",temp, op1,op2,t, result);
       }
       temp++;
 
