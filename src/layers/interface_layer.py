@@ -6,6 +6,7 @@ from utils import functions as f
 from utils import utils as u
 from logger import Logger
 
+
 class Layer(metaclass=abc.ABCMeta):
     def __init__(self):
         self.depth = None
@@ -39,10 +40,13 @@ class Layer(metaclass=abc.ABCMeta):
         raise AssertionError
 
     @abc.abstractmethod
-    def get_weights(self,convert_to_float):
+    def get_weights(self, convert_to_float):
         raise AssertionError
 
     @abc.abstractmethod
-    def get_biases(self,convert_to_float):
+    def get_biases(self, convert_to_float):
         return AssertionError
 
+    @abc.abstractmethod
+    def summary(self):
+        return AssertionError

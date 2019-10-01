@@ -45,6 +45,7 @@ class NeuralNetwork():
             self.input_layer.z = self.fixedConverter.convert_float_to_fixed(x)
             self.input_layer.a = self.fixedConverter.convert_float_to_fixed(x)
         else:
+            self.log.info("shape of x %s value of x %s", x.shape, x[0][0])
             self.input_layer.z = x
             self.input_layer.a = x
         for prev_layer, layer in self.layers:
@@ -70,3 +71,12 @@ class NeuralNetwork():
                 delta = prev_delta
         # update weights and biases to find the local minia
         optimizer.apply(self.layers, sum_der_w, sum_der_b, len(batch))
+
+    def summary(self):
+        self.log.info("layer %s with output %s",
+                      self.layers[0][0].__class__.__name__,
+                      self.layers[0][0].summary())
+
+        for _, layer in self.layers:
+            self.log.info("layer %s with output %s", layer.__class__.__name__,
+                          layer.summary())

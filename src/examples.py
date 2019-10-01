@@ -135,6 +135,118 @@ def cnn02(regularization, epoch, batch_size, kernel_size, pool_size, dropout):
     return net, optimizer, num_epochs, batch_size
 
 
+def vgg_net(regularization, epoch, batch_size, kernel_size, pool_size,
+            dropout):
+    net = n.NeuralNetwork([
+        InputLayer(height=48, width=48, depth=3),
+        ConvolutionalLayer(
+            64,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            64,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
+        ConvolutionalLayer(
+            128,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            128,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
+        ConvolutionalLayer(
+            256,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            256,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            256,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
+        ConvolutionalLayer(
+            512,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            512,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            256,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
+        ConvolutionalLayer(
+            512,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            512,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        ConvolutionalLayer(
+            256,
+            kernel_size,
+            init_func=f.glorot_uniform,
+            act_func=f.relu,
+            dropout=dropout),
+        MaxPoolingLayer(pool_size=pool_size, dropout=dropout),
+        Flatten(None, None, None),
+        FullyConnectedLayer(
+            4096,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout),
+        FullyConnectedLayer(
+            4096,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.sigmoid,
+            dropout=dropout),
+        FullyConnectedLayer(
+            1000,
+            init_func=f.glorot_uniform_initializer,
+            act_func=f.softmax,
+            dropout=dropout),
+    ], f.quadratic, regularization)
+    # optimizer = SGD(0.1)
+    optimizer = ADAM()
+    # optimizer = o.ADAM()
+    num_epochs = epoch
+    batch_size = batch_size
+    return net, optimizer, num_epochs, batch_size
+
+
 def load_weights_and_biases(net):
     print("Loading weights and Biases for retraining")
     weights_biases = np.load("retrain_weights.npz")
@@ -156,6 +268,15 @@ def load_weights_and_biases(net):
             next_layer.b = weights_biases["b"][1]
     return net
 
+
+# def create_npz_fashion():
+#     u.build_mnist_npz("/home/yakh149a/Downloads/fashion")
+
+# if __name__ == "__main__":
+#     Logger()
+#     # create_npz_fashion()
+
+#     x, y = u.load_mnist_fashion_npz("/home/yakh149a/Downloads/fashion")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -189,15 +310,18 @@ if __name__ == "__main__":
     args = parser.parse_args()
     Logger()
     train = Train()
+
     np.random.seed(314)
     dropout = args.dropout
     log = Logger.get_logger(__name__)
     u.print("Loading '%s'..." % args.data, bcolor=u.bcolors.BOLD)
-    trn_set, tst_set = u.load_mnist_npz(args.data)
+    # trn_set, tst_set = u.load_mnist_npz(args.data)
 
-    trn_set, vld_set = (trn_set[0][:50000],
-                        trn_set[1][:50000]), (trn_set[0][50000:],
-                                              trn_set[1][50000:])
+    # log.info("trn_set shape %s", type(trn_set))
+    # log.info("tst_set shape %s", type(tst_set))
+    # trn_set, vld_set = (trn_set[0][:50000],
+    #                     trn_set[1][:50000]), (trn_set[0][50000:],
+    #                                           trn_set[1][50000:])
 
     u.print("Loading '%s'..." % args.func, bcolor=u.bcolors.BOLD)
     log.debug("args.func-- " + str(args.func) + " args.regularization-- " +
@@ -208,10 +332,15 @@ if __name__ == "__main__":
     net, optimizer, num_epochs, batch_size = locals()[args.func](
         args.regularization, args.epoch, args.batch_size, args.kernel_size,
         args.pool_size, args.dropout)
+    net.summary()
     if args.retrain:
         net = load_weights_and_biases(net)
     log.debug(inspect.getsource(locals()[args.func]).strip())
 
     u.print("Training network...", bcolor=u.bcolors.BOLD)
-    train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set,
-                vld_set)
+    # train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set,
+    #             vld_set)
+
+    trn_set, tst_set = u.load_mnist_fashion_npz(
+        "/home/yakh149a/Downloads/fashion")
+    train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set, None)

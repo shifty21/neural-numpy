@@ -53,9 +53,14 @@ class FullyConnectedLayer(Layer):
             return self.fixedConverter.convert_fixed_to_float(self.b)
         return self.b
 
+    def summary(self):
+        return self.w.shape
+
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out),
                                 prev_layer.n_out, self.n_out)
+
+        # self.log.info("fully connected layer shape %s", self.w.shape)
         self.b = f.zero_custom((self.n_out, 1))
         self.vw = f.zeros_like(self.w)
         self.vb = f.zeros_like(self.b)
@@ -94,6 +99,8 @@ class FullyConnectedLayer(Layer):
             # self.a = self.z
             # self.log.debug("type of    a %s", str(self.a))
         else:
+            self.log.info("shape of self.w %s and prev_a %s", self.w.shape,
+                          prev_a.shape)
             self.z = self.w @ prev_a + self.b
             # self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
             self.a = self.act_func(self.z)

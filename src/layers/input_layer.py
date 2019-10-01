@@ -7,9 +7,9 @@ from layers.interface_layer import Layer
 
 
 class InputLayer(Layer):
-    def __init__(self, height, width):
+    def __init__(self, height, width, depth=1):
         super().__init__()
-        self.depth = 1
+        self.depth = depth
         self.height = height
         self.width = width
         self.n_out = self.depth * self.height * self.width
@@ -29,3 +29,6 @@ class InputLayer(Layer):
 
     def get_biases(self, convert_to_float):
         return []
+
+    def summary(self):
+        return (self.depth, self.height, self.width)

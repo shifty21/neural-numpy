@@ -14,7 +14,7 @@ class MaxPoolingLayer(Layer):
     def __init__(self, pool_size, dropout=False):
         super().__init__()
         self.log = Logger.get_logger(__name__)
-        self.log.info('MaxPoolingLayer init')
+        # self.log.info('MaxPoolingLayer init')
         self.pool_size = pool_size
         self.der_act_func = lambda x: x
         self.dropout = dropout
@@ -31,6 +31,9 @@ class MaxPoolingLayer(Layer):
             return self.fixedConverter.convert_fixed_to_float(self.b)
         return self.b
 
+    def summary(self):
+        return (None, self.height, self.width, self.depth)
+
     def connect_to(self, prev_layer):
         assert isinstance(prev_layer, ConvolutionalLayer)
         self.depth = prev_layer.depth
@@ -40,6 +43,9 @@ class MaxPoolingLayer(Layer):
             (prev_layer.width - self.pool_size) // self.pool_size) + 1
         self.n_out = self.depth * self.height * self.width
 
+        # self.log.info("maxpool_layer height %s", self.height)
+
+        self.log.info("maxpool_layer width %s", self.width)
         self.w = np.empty((0))
         self.b = np.empty((0))
         self.vw = f.zeros_like(self.w)

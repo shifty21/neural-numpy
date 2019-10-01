@@ -23,7 +23,7 @@ class CustomMultiplier:
         self.total_overflow = 0
         self.sigmoid_arr = sigmoid_arr
         # self.pool = multiprocessing.Pool(multiprocessing.cpu_count())
-        self.log.info("Loaded library")
+        # self.log.info("Loaded library")
 
     @staticmethod
     def get_total_overflow():

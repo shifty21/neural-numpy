@@ -18,7 +18,7 @@ class ConvolutionalLayer(Layer):
     def __init__(self, depth, kernel_size, init_func, act_func, dropout=False):
         super().__init__()
         self.log = Logger.get_logger(__name__)
-        self.log.info('ConvolutionalLayer init')
+        # self.log.info('ConvolutionalLayer init')
         self.depth = depth
         self.kernel_size = kernel_size
         self.init_func = init_func
@@ -52,6 +52,9 @@ class ConvolutionalLayer(Layer):
         ]
         self._mul.restype = ctypes.c_int
 
+    def summary(self):
+        return self.w.shape
+
     def connect_to(self, prev_layer):
         self.stride_length = 1
         self.height = (
@@ -59,7 +62,6 @@ class ConvolutionalLayer(Layer):
         self.width = (
             (prev_layer.width - self.kernel_size) // self.stride_length) + 1
         self.n_out = self.depth * self.height * self.width
-
         self.w = self.init_func(
             (self.depth, prev_layer.depth, self.kernel_size, self.kernel_size),
             prev_layer.n_out, self.n_out)
@@ -81,11 +83,6 @@ class ConvolutionalLayer(Layer):
         :param prev_layer: the previous layer of the network. The activations of the previous layer must be a list of
             feature maps, where each feature map is a 2d matrix
         """
-        # print("w.shape " + str(self.w.shape))
-        # print("depth " + str(self.depth) + " prev_layer.depth " +
-        #       str(prev_layer.depth) + " self.kernel_size " +
-        #       str(self.kernel_size) + " self.kernel_size " +
-        # str(self.kernel_size))
         assert self.w.shape == (self.depth, prev_layer.depth, self.kernel_size,
                                 self.kernel_size)
         assert self.b.shape == (self.depth, 1)
@@ -97,13 +94,17 @@ class ConvolutionalLayer(Layer):
                 prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
-
         self.config_lib(self.w, prev_a)
         filters_c_out = self.w.shape[0]
         filters_c_in = self.w.shape[1]
         filters_h = self.w.shape[2]
         filters_w = self.w.shape[3]
         image_c = prev_a.shape[0]
+        self.log.info("shape of w %s shape of image prev= %s", self.w.shape,
+                      prev_a.shape)
+        self.log.info("image_c =%s, filters_c_in=%s", image_c, filters_c_in)
+        self.log.info("image value at first dimension =%s", prev_a[0])
+        self.log.info("image value at 2nd dimension =%s", prev_a[0][0])
         assert image_c == filters_c_in
         image_h = prev_a.shape[1]
         image_w = prev_a.shape[2]
