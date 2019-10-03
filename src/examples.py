@@ -17,23 +17,23 @@ from utils.fixed_point import FixedPoint
 
 def fcl01(regularization, epoch, batch_size, dropout=False, *_):
     net = n.NeuralNetwork([
-        InputLayer(height=28, width=28),
+        InputLayer(height=28, width=28, depth=1),
         FullyConnectedLayer(
             100,
             init_func=f.glorot_uniform_initializer,
-            act_func=f.sigmoid,
+            act_func=f.relu,
             dropout=dropout),
         FullyConnectedLayer(
             10,
             init_func=f.glorot_uniform_initializer,
-            act_func=f.sigmoid,
+            act_func=f.relu,
             dropout=dropout)
     ], f.quadratic, regularization)
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = NAG(3.0,0.9)
-    # optimizer = ADAM()
+    optimizer = ADAM()
     # optimizer = ADAM_MAX()
-    optimizer = SGD(3.0)
+    # optimizer = SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
@@ -41,33 +41,33 @@ def fcl01(regularization, epoch, batch_size, dropout=False, *_):
 
 def fcl010(regularization, epoch, batch_size, dropout=False, *_):
     net = n.NeuralNetwork([
-        InputLayer(height=28, width=28),
+        InputLayer(height=28, width=28, depth=1),
         FullyConnectedLayer(
             512,
             init_func=f.glorot_uniform_initializer,
-            act_func=f.sigmoid,
+            act_func=f.relu,
             dropout=dropout),
         FullyConnectedLayer(
             256,
             init_func=f.glorot_uniform_initializer,
-            act_func=f.sigmoid,
+            act_func=f.relu,
             dropout=dropout),
         FullyConnectedLayer(
             128,
             init_func=f.glorot_uniform_initializer,
-            act_func=f.sigmoid,
+            act_func=f.relu,
             dropout=dropout),
         FullyConnectedLayer(
             10,
             init_func=f.glorot_uniform_initializer,
-            act_func=f.sigmoid,
+            act_func=f.relu,
             dropout=dropout)
     ], f.quadratic, regularization)
     # optimizer = o.SGD_Momentum(3.0,0.9)
     # optimizer = NAG(3.0,0.9)
-    # optimizer = ADAM()
+    optimizer = ADAM()
     # optimizer = ADAM_MAX()
-    optimizer = SGD(3.0)
+    # optimizer = SGD(3.0)
     num_epochs = epoch
     batch_size = batch_size
     return net, optimizer, num_epochs, batch_size
@@ -90,7 +90,7 @@ def fcl02(regularization, epoch, batch_size, *_):
 
 def cnn01(regularization, epoch, batch_size, kernel_size, pool_size, dropout):
     net = n.NeuralNetwork([
-        InputLayer(height=28, width=28),
+        InputLayer(height=48, width=48, depth=3),
         ConvolutionalLayer(
             2,
             kernel_size=kernel_size,
@@ -315,13 +315,13 @@ if __name__ == "__main__":
     dropout = args.dropout
     log = Logger.get_logger(__name__)
     u.print("Loading '%s'..." % args.data, bcolor=u.bcolors.BOLD)
-    # trn_set, tst_set = u.load_mnist_npz(args.data)
+    trn_set, tst_set = u.load_mnist_npz(args.data)
 
     # log.info("trn_set shape %s", type(trn_set))
     # log.info("tst_set shape %s", type(tst_set))
-    # trn_set, vld_set = (trn_set[0][:50000],
-    #                     trn_set[1][:50000]), (trn_set[0][50000:],
-    #                                           trn_set[1][50000:])
+    trn_set, vld_set = (trn_set[0][:50000],
+                        trn_set[1][:50000]), (trn_set[0][50000:],
+                                              trn_set[1][50000:])
 
     u.print("Loading '%s'..." % args.func, bcolor=u.bcolors.BOLD)
     log.debug("args.func-- " + str(args.func) + " args.regularization-- " +
@@ -341,6 +341,7 @@ if __name__ == "__main__":
     # train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set,
     #             vld_set)
 
-    trn_set, tst_set = u.load_mnist_fashion_npz(
-        "/home/yakh149a/Downloads/fashion")
+    # trn_set, tst_set = u.load_mnist_fashion_npz(
+    #     "/home/yakh149a/Downloads/fashion")
+    # log.info("tst_set %s with shape %s", tst_set, len(tst_set))
     train.train(net, optimizer, num_epochs, batch_size, trn_set, tst_set, None)

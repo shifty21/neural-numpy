@@ -46,17 +46,21 @@ def build_mnist_npz(mnist_dirpath):
             tst_lbls=tst_lbls)
 
 
+def transpose_images(image_set):
+    return np.asarray([im.transpose(-1, 0, 1) for im in image_set])
+
+
 def load_mnist_fashion_npz(path):
     log = Logger.get_logger(__name__)
     log.info('loading fashion npz')
-
+    maximum = 60000
     train_data = pd.read_csv(path + '/fashion-mnist_train.csv')
     test_data = pd.read_csv(path + '/fashion-mnist_test.csv')
     log.info("train_data shape %s", train_data.shape)  #(60,000*785)
     log.info("test_data shape %s", test_data.shape)  #(10000,785)
-    train_X = np.array(train_data.iloc[:, 1:])
+    train_X = np.array(train_data.iloc[:, 1:])[:maximum]
     test_X = np.array(test_data.iloc[:, 1:])
-    train_Y = np.array(train_data.iloc[:, 0])  # (60000,)
+    train_Y = np.array(train_data.iloc[:, 0])[:maximum]  # (60000,)
     test_Y = np.array(test_data.iloc[:, 0])  #(10000,)
     log.info("train_x shape %s test_x shape %s", train_X.shape, test_X.shape)
     # Convert the images into 3 channels
@@ -66,17 +70,12 @@ def load_mnist_fashion_npz(path):
     # Reshape images as per the tensor format required by tensorflow
     train_X = train_X.reshape(-1, 28, 28, 3)
     test_X = test_X.reshape(-1, 28, 28, 3)
-    log.info("train_x shape %s test_x shape %s", train_X.shape, test_X.shape)
-    # Resize the images 48*48 as required by VGG16
-    train_X = np.asarray([
-        np.array(Image.fromarray(im, mode="RGB").resize((48, 48)))
-        for im in train_X
-    ])
-    test_X = np.asarray([
-        np.array(Image.fromarray(im, mode="RGB").resize((48, 48)))
-        for im in test_X
-    ])
 
+    log.info("train_x shape %s test_x shape %s", train_X.shape, test_X.shape)
+    train_X = resize_images(train_X)
+    test_X = resize_images(test_X)
+    train_X = transpose_images(train_X)
+    test_X = transpose_images(test_X)
     log.info("train_x shape %s test_x shape %s", train_X.shape, test_X.shape)
     # Normalise the data and change data type
     train_X = train_X / 255.
@@ -84,9 +83,29 @@ def load_mnist_fashion_npz(path):
     train_X = train_X.astype('float32')
     test_X = test_X.astype('float32')
 
+    train_Y_one_hot = get_categorical_transform(train_Y)
+    test_Y_one_hot = get_categorical_transform(test_Y)
+    # Splitting train data as train and validation data
+    train_X, valid_X, train_label, valid_label = train_test_split(
+        train_X, train_Y_one_hot, test_size=0.2, random_state=13)
+
+    log.info(
+        "train_x shape %s valid_x shape %s train_label shape %s valid_label shape %s",
+        train_X.shape, valid_X.shape, train_label.shape, valid_label.shape)
+    return (train_X, train_label), (valid_X, valid_label)
+
+
+def resize_images(train_set):
+    # Resize the images 48*48 as required by VGG16
+    return np.asarray([
+        np.array(Image.fromarray(im, mode="RGB").resize((48, 48)))
+        for im in train_set
+    ])
+
+
+def get_categorical_transform(train_set):
     # Converting Labels to one hot encoded format
     def to_categorical(lbl):
-        # log.info("type of lbl %s", len(lbl))
         if lbl not in labels_to_categorical:
             y = np.zeros((10, 1), dtype=np.uint8)
             y[lbl] = 1
@@ -95,23 +114,8 @@ def load_mnist_fashion_npz(path):
 
     labels_to_categorical = dict()
 
-    train_Y_one_hot = np.asarray([to_categorical(lbl) for lbl in train_Y],
-                                 dtype=np.int8)
-    test_Y_one_hot = np.asarray([to_categorical(lbl) for lbl in test_Y],
-                                dtype=np.int8)
-
-    # train_Y_one_hot = to_categorical(train_Y)
-    # test_Y_one_hot = to_categorical(test_Y)
-
-    # log.info("test_Y_one_hot %s", train_Y_one_hot[0])
-    # Splitting train data as train and validation data
-    train_X, valid_X, train_label, valid_label = train_test_split(
-        train_X, train_Y_one_hot, test_size=0.2, random_state=13)
-
-    log.info(
-        "train_x shape %s valid_x shape %s train_label shape %s valid_label shape %s",
-        train_X.shape, valid_X.shape, train_label.shape, valid_label.shape)
-    return (train_X, train_Y), (valid_X, valid_label)
+    return np.asarray([to_categorical(lbl) for lbl in train_set],
+                      dtype=np.int8)
 
 
 def load_mnist_npz(mnist_npzpath):
@@ -131,8 +135,8 @@ def load_mnist_npz(mnist_npzpath):
 
     trn_imgs = dataset["trn_imgs"]
     trn_lbls = dataset["trn_lbls"]
-    log.info("trn_images %s", trn_imgs.shape)
-    log.info("trn_lbls %s", trn_lbls.shape)
+    # log.info("trn_images %s", trn_imgs.shape)
+    # log.info("trn_lbls %s", trn_lbls.shape)
     trn_x = np.array([img / 255. for img in trn_imgs])
     trn_y = np.array([to_categorical(lbl) for lbl in trn_lbls]).astype(
         np.uint8)
@@ -142,7 +146,7 @@ def load_mnist_npz(mnist_npzpath):
     tst_x = np.array([img / 255. for img in tst_imgs]).astype(np.float32)
     tst_y = np.array([to_categorical(lbl) for lbl in tst_lbls]).astype(
         np.uint8)
-    log.info("shape of trn_x %s", trn_x[0][0])
+    # log.info("shape of trn_x %s", trn_x[0][0])
     return (trn_x, trn_y), (tst_x, tst_y)
 
 

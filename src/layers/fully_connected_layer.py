@@ -1,17 +1,16 @@
-import numpy as np
-
-from utils import functions as f
-from utils import utils as u
-from logger import Logger
 import os
-from utils.fixed_point import FixedPoint
-from layers.interface_layer import Layer
-from utils.custom_multiplier import CustomMultiplier
-
+import ctypes
+import numpy as np
+from ctypes import *
 from ctypes import cdll
 from ctypes import c_int8, c_int
 from numpy.ctypeslib import ndpointer
-from ctypes import *
+from utils import functions as f
+from utils import utils as u
+from logger import Logger
+from utils.fixed_point import FixedPoint
+from layers.interface_layer import Layer
+from utils.custom_multiplier import CustomMultiplier
 
 
 class FullyConnectedLayer(Layer):
@@ -33,15 +32,8 @@ class FullyConnectedLayer(Layer):
         )
         self.customMultiplier = CustomMultiplier(None)
 
-    def config_lib(self, w, prev_a):
-        import ctypes
-        self._mul = self.lib.matrix_multiply
-        # self._mul.argtypes = [
-        #     ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int, ctypes.c_int,
-        #     ctypes.c_int
-        # ]
-        self._mul.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int]
-        self._mul.restype = ctypes.c_int
+    def summary(self):
+        return self.w.shape
 
     def get_weights(self, convert_to_float):
         if convert_to_float:
@@ -53,14 +45,15 @@ class FullyConnectedLayer(Layer):
             return self.fixedConverter.convert_fixed_to_float(self.b)
         return self.b
 
-    def summary(self):
-        return self.w.shape
+    def config_lib(self, w, prev_a):
+        self._mul = self.lib.matrix_multiply
+        self._mul.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int]
+        self._mul.restype = ctypes.c_int
 
     def connect_to(self, prev_layer):
         self.w = self.init_func((self.n_out, prev_layer.n_out),
                                 prev_layer.n_out, self.n_out)
 
-        # self.log.info("fully connected layer shape %s", self.w.shape)
         self.b = f.zero_custom((self.n_out, 1))
         self.vw = f.zeros_like(self.w)
         self.vb = f.zeros_like(self.b)
@@ -86,7 +79,6 @@ class FullyConnectedLayer(Layer):
                 prev_a.shape[0], prev_a.shape[1]) < self.dropout_rate
             prev_a = np.multiply(prev_a, dropout_matrix)
             prev_a = prev_a / self.dropout_rate
-        # self.log.debug("type of prev_a " + str(type(prev_a.ravel()[0])))
         if inference_custom == True:
             self.config_lib(self.w, prev_a)
             wx = CustomMultiplier.matrix_multiplication(
@@ -96,13 +88,8 @@ class FullyConnectedLayer(Layer):
             self.a = self.act_func(self.z)
             # self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
             self.a = self.fixedConverter.convert_float_to_fixed(self.a)
-            # self.a = self.z
-            # self.log.debug("type of    a %s", str(self.a))
         else:
-            self.log.info("shape of self.w %s and prev_a %s", self.w.shape,
-                          prev_a.shape)
             self.z = self.w @ prev_a + self.b
-            # self.a = self.customMultiplier.sigmoid_activation_lut(self.z)
             self.a = self.act_func(self.z)
         assert self.z.shape == self.a.shape
 

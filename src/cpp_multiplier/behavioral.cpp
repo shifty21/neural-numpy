@@ -273,7 +273,7 @@ extern "C"
         r = custom_multiplier(abs(op1),abs(op2));
         // r = mul8s_1KR8(abs(op1),abs(op2));
         // printf("r=%d and size of t = %d\n",r,sizeof(t));
-        r = r >> 4;
+        r = r >> 3;
         // printf("r after 4 right shift=%d",r);
         if (sign==true){
           t = (~r+1);

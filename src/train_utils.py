@@ -1,5 +1,6 @@
 import numpy as np
 import utils as u
+import time
 from logger import Logger
 from network import NeuralNetwork
 from utils.fixed_point import FixedPoint
@@ -9,6 +10,8 @@ from utils.custom_multiplier import CustomMultiplier
 class Train:
     def __init__(self):
         self.log = Logger.get_logger(__name__)
+
+        self.current_milli_time = lambda: int(round(time.time() * 1000))
 
     def train(self,
               net,
@@ -22,10 +25,10 @@ class Train:
         assert isinstance(net, NeuralNetwork)
         assert num_epochs > 0
         assert batch_size > 0
-
         trn_x, trn_y = trn_set
         inputs = [(x, y) for x, y in zip(trn_x, trn_y)]
         for i in range(num_epochs):
+            u.print("\n")
             np.random.shuffle(inputs)
             # divide input observations into batches
             batches = [
@@ -33,14 +36,26 @@ class Train:
                 for j in range(0, len(inputs), batch_size)
             ]
             inputs_done = 0
+            total_inputs = len(batches) * batch_size
+            first = -1
+
+            start = self.current_milli_time()
             for j, batch in enumerate(batches):
                 net.backpropagate(batch, optimizer)
                 inputs_done += len(batch)
+                if first == -1:
+                    first = first + 1
+                    time_for_batch = self.current_milli_time() - start
                 u.print(
-                    "Epoch %02d %s [%d/%d]" %
-                    (i + 1, u.bar(inputs_done, len(inputs)), inputs_done,
-                     len(inputs)),
+                    "Epoch %02d %s [%d/%d]  remaining time %0.2f min time for one batch %d milli"
+                    % (i + 1, u.bar(inputs_done, len(inputs)), inputs_done,
+                       len(inputs),
+                       ((time_for_batch * (total_inputs - inputs_done)) /
+                        (60000 * batch_size)), time_for_batch),
                     override=True)
+            end = self.current_milli_time() - start
+            u.print("Total training time for Epoch %d was %d sec" %
+                    (i + 1, int(end / 1000)))
             if vld_set:
                 # test the net at the end of each epoch
                 u.print(
@@ -55,10 +70,9 @@ class Train:
                      len(inputs)),
                     override=True)
 
-            u.print()
             u.print("Testing network...", bcolor=u.bcolors.BOLD)
             accuracy = self.test(net, tst_set)
-            u.print("Test accuracy: %0.2f%%" % (accuracy * 100))
+            # u.print("Test accuracy: %0.2f%%" % (accuracy * 100))
         self.save(net, "np_weights.npz")
 
     def test(self, net, tst_set):
@@ -73,8 +87,9 @@ class Train:
             inputs_done += 1
             net.feedforward(x)
             u.print(
-                "%s [%d/%d] > Testing..." % (u.bar(inputs_done, inputs_len),
-                                             inputs_done, inputs_len),
+                "Testing  %s [%d/%d] >> Test accuracy --- %0.2f %%" %
+                (u.bar(inputs_done, inputs_len), inputs_done, inputs_len,
+                 accuracy / inputs_done * 100),
                 override=True)
             if np.argmax(net.output_layer.a) == np.argmax(y):
                 accuracy += 1

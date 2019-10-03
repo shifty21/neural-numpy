@@ -70,6 +70,7 @@ def relu(x):
 
 
 def der_relu(x, y=None):
+    x[x < 0] = 0
     x[x > 0] = 1
     return x
 

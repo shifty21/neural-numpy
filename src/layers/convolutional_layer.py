@@ -100,11 +100,7 @@ class ConvolutionalLayer(Layer):
         filters_h = self.w.shape[2]
         filters_w = self.w.shape[3]
         image_c = prev_a.shape[0]
-        self.log.info("shape of w %s shape of image prev= %s", self.w.shape,
-                      prev_a.shape)
-        self.log.info("image_c =%s, filters_c_in=%s", image_c, filters_c_in)
-        self.log.info("image value at first dimension =%s", prev_a[0])
-        self.log.info("image value at 2nd dimension =%s", prev_a[0][0])
+
         assert image_c == filters_c_in
         image_h = prev_a.shape[1]
         image_w = prev_a.shape[2]
@@ -130,8 +126,6 @@ class ConvolutionalLayer(Layer):
                         c_correl = 0
                         numpy_correl = 0
                         if inference == True:
-                            # self.log.info("type of weight - %s",
-                            #               type(self.z[0][0][0]))
                             c_correl = self._mul(
                                 prev_a_window.ravel().ctypes.data,
                                 ctypes_filter_ravel, len(filter_ravel),
@@ -143,26 +137,7 @@ class ConvolutionalLayer(Layer):
                                 prev_a_window.ravel(),
                                 filter_ravel,
                                 mode="valid")
-
-                        # numpy_correl = np.correlate(
-                        #     prev_a_window.ravel(), filter_ravel, mode="valid")
-                        # self.log.debug(
-                        #     "stride length %s type %s filter type %s and stride length %s",
-                        # prev_a_window.ravel().strides[0],
-                        # type(prev_a_window.ravel()[0]),
-                        # type(filter_ravel[0]), filter_ravel.strides[0])
-
-                        # c_correl = self._mul(prev_a_window.ravel().ctypes.data,
-                        #                      ctypes_filter_ravel,
-                        #                      len(filter_ravel),
-                        #                      prev_a_window.ravel().strides[0],
-                        #                      filter_ravel.strides[0])
-                        # if (np.int8(c_correl) != 0):
-                        #     self.log.debug(
-                        #         "c_correl -> %s type -> %s, numpp_correl -> %s type -> %s",
-                        #         np.int8(c_correl), type(c_correl),
-                        #         numpy_correl, type(numpy_correl[0]))
-                        self.z[r, i, j] += c_correl
+                        self.z[r, i, j] += numpy_correl
 
         for r in range(self.depth):
             self.z[r] += self.b[r]
@@ -170,11 +145,12 @@ class ConvolutionalLayer(Layer):
         if inference == True:
             self.a = self.customMultiplier.sigmoid_activation_lut_conv(self.z)
         else:
-            self.a = np.vectorize(self.act_func)(self.z)
+            # if (self.z.all() != 0):
+            #     self.a = np.vectorize(self.act_func)(self.z)
+            # else:
+            self.a = self.z
 
         self.a = self.fixedConverter.convert_float_to_fixed(self.a)
-        self.log.debug("type of convolution layer array %s",
-                       str(type(self.a.ravel()[0])))
         assert self.a.shape == self.z.shape
 
     def get_prev_a_window(self, prev_a, t, v, h):
